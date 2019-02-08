@@ -1,0 +1,29 @@
+<!-- 
+base index.html
+To run squareEngine you need make a "game" javascript file at the bottom of this html file.
+You can call it what ever you want as long as you rename it down there.
+
+Besides having to load squareEngine.js you must have a canvas element with id="squareEngineCanvas"
+Also good to have a <p> with id="logger"which gameGrid uses to print output.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- <meta charset="UTF-8"> -->
+    <title>Square Engine Test</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="squareEngine.js"></script> 
+    
+
+</head>
+<body>
+<main class="main_body">
+    <p> Square Engine Test <br> </p>
+    <hr>
+    <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+    <p id="logger"></p>
+</main>
+<script src="gameTest.js"></script> 
+</body>
+</html>
