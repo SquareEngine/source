@@ -20,7 +20,7 @@ It will instanciate a new gameObject and place it inside the _gameObjects array.
 
 */
 class GameGrid{
-    constructor(width=10, height=10, canvasWidth=500, canvasHeight=500, gameSpeed=1, stepValue=100){
+    constructor(width=10, height=10, canvasWidth=500, canvasHeight=500, gameSpeed=1){
 
         this._width = width;
         this._height = height;
@@ -46,7 +46,6 @@ class GameGrid{
         this._lastUpdate;
         this._deltaTime;
         this._stepCounter = 0;
-        this._stepValue = stepValue;
         this._gameSpeed = gameSpeed;
 
         // game states        
@@ -65,13 +64,7 @@ class GameGrid{
                 this._startScreen();
                 break;
             case(gameStateEnum.UPDATE): // our game update 
-                // step counter can be used to make the game have stepped updates
-                // set the stepCounter to 0 if you don't want stepped animation
-                this._stepCounter += this._deltaTime * this._gameSpeed; 
-                if(this._stepCounter >= this._stepValue){
-                    this._update()
-                    this._stepCounter = 0;
-                }
+                this._update()
                 this._render();
                 break;
             case(gameStateEnum.PAUSED):
@@ -98,17 +91,21 @@ class GameGrid{
     }
 
     _update(){
-        // pre Update
-        this.preUpdate()
+        // step counter can be used to make the game have stepped updates
+        // set the stepCounter to 0 if you don't want stepped animation
+        this._stepCounter += this._deltaTime; 
+        let canUpdate = this._stepCounter >= this._gameSpeed;
+        // pre update
+        if(canUpdate) this.preUpdate()       
         for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._preUpdate(this);
-
-        // game update
-        this.update();
+        // update
+        if(canUpdate) this.update()
         for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._update(this);
-
         // post update
-        this.postUpdate()
+        if(canUpdate) this.postUpdate()
         for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._postUpdate(this);
+        // reset counter
+        if(canUpdate) this._stepCounter = 0;
  
     }
 
@@ -148,9 +145,14 @@ class GameGrid{
     _setGameToStart(){this._gameState = gameStateEnum.START;}
     _setGameToUpdate(){this._gameState = gameStateEnum.UPDATE;}
     _setGameToPaused(){this._gameState = gameStateEnum.PAUSED;}
-    _setGameToOver(){this._gameState = gameStateEnum.OVER;}
+    _setGameToOver(){
+        this._gameState = gameStateEnum.OVER;
+        this._disableAllUpdates();
+    }
 
     _start(){ for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._start(this); }
+
+    _disableAllUpdates(){ for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._canUpdate=false; }
 
     //##########################################################################################
     //################################# methods to override ####################################
@@ -228,7 +230,6 @@ class GameGrid{
 
     // changes the game speed & step values
     setGameSpeed(speed){this._gameSpeed=speed;}
-    setGameStep(step){this._stepValue=step;}
 
     // renders a square at x & y positions with given size and color
     renderSquare(positionX, positionY, size, color){
@@ -271,7 +272,10 @@ class GameObject {
         this._gameGrid = null;
         this._canMove = true;
         this._stepMove = true;
+        this._speed = 100;
+        this._speedCounter = 0;
         this._bb = new BoundingBox(new Vector(0,0), new Vector(1,1), this);
+        this._autoBB = true;
 
         this.pushSquare( new Vector(0,0) );
     }
@@ -279,8 +283,12 @@ class GameObject {
     _preUpdate(gameGrid){ if(this._canUpdate == true) this.preUpdate(gameGrid); }
     _update(gameGrid){
         if(this._canUpdate == true) {
-            if(this._canMove==true) this.move(this.direction.x, this.direction.y);
-            this.update(gameGrid); 
+            this._speedCounter += gameGrid.getDeltaTime();
+            if(this._speedCounter >= this._speed){
+                if(this._canMove==true) this.move(this.direction.x, this.direction.y);
+                this.update(gameGrid); 
+                this._speedCounter = 0;
+            }
         }
     }
     _postUpdate(gameGrid){ if(this._canUpdate == true) this.postUpdate(gameGrid); }
@@ -320,6 +328,13 @@ class GameObject {
     setMoveOff(){this._canMove=false;}
     setStepMoveOn(){this._stepMove=true;}
     setStepMoveOff(){this._stepMove=false;}
+    setSpeed(speed){this._speed=speed;}
+    getSpeed(){return this._speed;}
+    lowerSpeed(value){
+        let newValue = this._speed - value;
+        if(newValue >= 0) this._speed = newValue;
+    }
+    addSpeed(value){this._speed += Math.abs(value);} // abs in case someone tries to pass negative numbers
 
     gameOver(){this._gameGrid._setGameToOver()};
     resetGame(){this._gameGrid._reset()};
@@ -327,15 +342,22 @@ class GameObject {
 
     pushSquare(vector){ // pushes a square to your squareArray
         this._squareArray.push(vector);
+        if(this._autoBB==true) this.updateBoundingBox();
     }
     popSquare(){ // pops a square to your squareArray
-        return this._squareArray.pop();
+        let returnData = this._squareArray.pop();
+        if(this._autoBB==true) this.updateBoundingBox();
+        return returnData;
     }
     removeSquare(index){ // removes a square in your squareArray at given index
-        return this._squareArray.splice(index, 1);
+        let returnData = this._squareArray.splice(index, 1);
+        if(this._autoBB==true) this.updateBoundingBox();
+        return returnData;
     }
     removeFirstSquare(index){ // removes the first square in your squareArray
-        return this._squareArray.splice(0, 1);
+        let returnData = this._squareArray.splice(0, 1);
+        if(this._autoBB==true) this.updateBoundingBox();
+        return returnData;
     }
 
     // when overriding these methods dont forget to pass a gameGrid input

@@ -2,12 +2,11 @@
 
 const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
-const SPEED_UP = 0.02;
+const SPEED_UP = 10;
 
 var gameGrid = new GameGrid(30, 20, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-gameGrid.setGameSpeed(0.1);
-gameGrid.setGameStep(10);
+gameGrid.setGameSpeed(100);
 
 let midH = parseInt(gameGrid.getWidth()/2)
 let midV = parseInt(gameGrid.getHeight()/2)
@@ -17,13 +16,11 @@ let dot = gameGrid.createGameObject("dot", "Ball", x=midH, y=midV);
 
 dot.setWrapAroundOff();
 dot.setStepMoveOff();
-
 dot.setRandomDirection();
 
 dot.start = function(gameGrid){
     this.leftPaddle = gameGrid.getGameObject("paddle1");
     this.rightPaddle = gameGrid.getGameObject("paddle2");
-
     this.leftOffset = 1;
     this.rightOffset = 1;
 }
@@ -34,14 +31,10 @@ dot.touchedLeft = function(x){
 
         if(this.leftPaddle._squareArray.length > 1){
             this.leftPaddle.popSquare();
-            this.leftPaddle.updateBoundingBox()
             this.leftPaddle.paddleLength -= 1;
-            gameGrid._gameSpeed += SPEED_UP;
+            this.lowerSpeed( SPEED_UP); // we can now lower or increase speed
         }
         else{
-            this.disableUpdate();
-            this.leftPaddle.disableUpdate();
-            this.rightPaddle.disableUpdate();
             this.gameOver();
             gameGrid.print("Right player won!")
         }
@@ -54,14 +47,10 @@ dot.touchedRight = function(x){
 
         if(this.rightPaddle._squareArray.length > 1){
             this.rightPaddle.popSquare();
-            this.rightPaddle.updateBoundingBox()
             this.rightPaddle.paddleLength -= 1;
-            gameGrid._gameSpeed += SPEED_UP;
+            this.lowerSpeed( SPEED_UP);
         }
         else{
-            this.disableUpdate();
-            this.leftPaddle.disableUpdate();
-            this.rightPaddle.disableUpdate();
             this.gameOver();
             gameGrid.print("Left player won!")
         }
