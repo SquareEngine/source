@@ -2,82 +2,72 @@
 
 const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
-const HORIZONTAL_UNITS = 30;
-const VERTICAL_UNITS = 20;
 
-var gameGrid = new GameGrid(HORIZONTAL_UNITS, VERTICAL_UNITS, CANVAS_WIDTH, CANVAS_HEIGHT);
+var gameGrid = new GameGrid(30, 20, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 gameGrid.setGameSpeed(0.1);
-gameGrid.setGameStep(0);
+gameGrid.setGameStep(10);
+
+let midH = parseInt(gameGrid.getWidth()/2)
+let midV = parseInt(gameGrid.getHeight()/2)
 
 // make dot first so it updates before paddles
-let dot = gameGrid.createGameObject("GameObject");
+let dot = gameGrid.createGameObject("dot", "Ball", x=midH, y=midV);
 
 dot.setWrapAroundOff();
 dot.setStepMoveOff();
 
-let h_dir = Math.floor( Math.random() * 2 );
-let v_dir = Math.floor( Math.random() * 2 );
+dot.setRandomDirection();
 
-dot.direction = new Vector( [1,-1][h_dir], [1, -1][v_dir] );
-
-dot.update = function(gameGrid){
-
-    let leftPaddle = gameGrid.getGameObject(1);
-    let rightPaddle = gameGrid.getGameObject(2);
-
-    if(dot.y < 0){
-        dot.y = 1;
-        dot.direction.y = 1;
-    }
-    else if(dot.y > VERTICAL_UNITS-1){
-        dot.y = VERTICAL_UNITS-2;
-        dot.direction.y = -1;
-    } 
-
-    if(dot.x == 1 && dot.direction.x == -1){
-        
-        let nextPos = dot.getNextPosition();
-        if (gameGrid.checkCollision(nextPos.x, nextPos.y, leftPaddle) == true){
-            dot.direction.x = 1;
-        }
-    }
-    else if(dot.x == HORIZONTAL_UNITS-2 && dot.direction.x == 1){
-        
-        let nextPos = dot.getNextPosition();
-        if (gameGrid.checkCollision(nextPos.x, nextPos.y, rightPaddle) == true){
-            dot.direction.x = -1;
-        }
-    } 
-    if(dot.x==0){
-        if (gameGrid.checkCollision(dot.x, dot.y, leftPaddle) == true){
-            dot.x=1;
-            dot.direction.x = 1;
-        }
-        else gameGrid._setGameToOver();
-    }
-    else if(dot.x==HORIZONTAL_UNITS-1){
-        if (gameGrid.checkCollision(dot.x, dot.y, rightPaddle) == true){
-            dot.x=HORIZONTAL_UNITS-2;
-            dot.direction.x = -1;
-        }
-        else gameGrid._setGameToOver();
-
-    }
-
+dot.start = function(gameGrid){
+    this.leftPaddle = gameGrid.getGameObject("paddle1");
+    this.rightPaddle = gameGrid.getGameObject("paddle2");
 }
 
-dot.move(parseInt(HORIZONTAL_UNITS/2), parseInt(VERTICAL_UNITS/2))
+dot.touchedLeft = function(x){
+    if(this.leftPaddle._squareArray.length > 1){
+        this.leftPaddle._squareArray.pop();
+    }
+    else{
+        this.disableUpdate();
+        this.leftPaddle.disableUpdate();
+        this.rightPaddle.disableUpdate();
+        this.gameOver();
+        gameGrid.print("Right player won!")
+    }
+    
+}
+
+dot.touchedRight = function(x){
+    if(this.rightPaddle._squareArray.length > 1){
+        this.rightPaddle._squareArray.pop();
+    }
+    else{
+        this.disableUpdate();
+        this.leftPaddle.disableUpdate();
+        this.rightPaddle.disableUpdate();
+        this.gameOver();
+        gameGrid.print("Left player won!")
+    }
+}
+
 
 for(let p=0; p<2; p++){
 
-    let paddle = gameGrid.createGameObject("GameObjectMove");
+    let name = "paddle" + (p+1);
+
+    let paddle = gameGrid.createGameObject(name, "Move");
 
     paddle.setColor(50, 50, 150);
 
-    paddle.x = p * (HORIZONTAL_UNITS-1);
+    let posX = p * (gameGrid.getWidth()-1);
+    let posY = parseInt(gameGrid.getHeight()/2)-2;
 
-    paddle.move(0, parseInt(VERTICAL_UNITS/2)-2)
+    paddle.move(posX, posY)
+
+    paddle.start = function(gameGrid){
+        this.ball = gameGrid.getGameObject("dot");
+    }
 
     if(p==1){
         paddle.moveKeys.UP = keyCodesEnum.UP;   
@@ -90,9 +80,13 @@ for(let p=0; p<2; p++){
     paddle.moveKeys.LEFT = null;
     paddle.setWrapAroundOff()
 
-    paddle.update = function(){
-        if(paddle.y < 0) paddle.y = 0;
-        else if(paddle.y > VERTICAL_UNITS-4) paddle.y = VERTICAL_UNITS-4;
+    paddle.update = function(gameGrid){
+        if(paddle.position.y < 0) paddle.position.y = 0;
+        else if(paddle.position.y > gameGrid.getHeight()-4) paddle.position.y = gameGrid.getHeight()-4;
+
+        if( this.checkVectorCollision( this.ball.getNextPosition() ) == true){
+            this.ball.direction.x *= -1;
+        }
     }
 }
 
