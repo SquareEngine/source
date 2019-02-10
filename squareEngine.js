@@ -271,7 +271,7 @@ class GameObject {
         this._gameGrid = null;
         this._canMove = true;
         this._stepMove = true;
-        this._bb = null;
+        this._bb = new BoundingBox(new Vector(0,0), new Vector(1,1), this);
 
         this.pushSquare( new Vector(0,0) );
     }
@@ -299,26 +299,8 @@ class GameObject {
     }
     // method that gets called right before the game starts
     _start(gameGrid){
-        this._generateBoundingBox(); // first thing is to generate a bounding box
+        this.updateBoundingBox(); // first thing is to generate a bounding box
         this.start(gameGrid);
-    }
-
-    _generateBoundingBox(){
-        let xLeft = this._squareArray[0].x;
-        let xRight = 1;
-        let yTop = this._squareArray[0].y;
-        let yBot = 1;
-
-        for(let i=0; i<this._squareArray.length; i++){
-            let currentSquare = this._squareArray[i];
-            xLeft = Math.min(xLeft, currentSquare.x);
-            xRight = Math.max(xRight, currentSquare.x+1);
-            yTop = Math.min(yTop, currentSquare.y);
-            yBot = Math.max(yBot, currentSquare.y+1);
-        }
-        let topLeft = new Vector(xLeft, yTop);
-        let botRight = new Vector(xRight, yBot);
-        this._bb = new BoundingBox(topLeft, botRight, this);
     }
 
     _inputKeyDown(keyCode){this.inputKeyDown(keyCode);}
@@ -451,6 +433,25 @@ class GameObject {
         }
         return false;
     }
+
+    updateBoundingBox(){
+        let xLeft = this._squareArray[0].x;
+        let xRight = 1;
+        let yTop = this._squareArray[0].y;
+        let yBot = 1;
+
+        for(let i=0; i<this._squareArray.length; i++){
+            let currentSquare = this._squareArray[i];
+            xLeft = Math.min(xLeft, currentSquare.x);
+            xRight = Math.max(xRight, currentSquare.x+1);
+            yTop = Math.min(yTop, currentSquare.y);
+            yBot = Math.max(yBot, currentSquare.y+1);
+        }
+        let topLeft = new Vector(xLeft, yTop);
+        let botRight = new Vector(xRight, yBot);
+        this._bb.topLeft = topLeft;
+        this._bb.botRight = botRight;
+    }
 }
 
 // a simple gameObject subClass that just adds movement keycodes to move up/down/left/right
@@ -501,6 +502,10 @@ class GameObjectMove extends GameObject{
 class GameObjectBall extends GameObject {
     constructor(x=0, y=0, canUpdate=true, canRender=true){
         super(x=x, y=y, canUpdate=canUpdate, canRender=canRender);
+        this.leftOffset = 0;
+        this.rightOffset = 0;
+        this.topOffset = 0;
+        this.botOffset = 0;
     }
 
     setRandomDirection(len=1, normalize=false){
@@ -521,23 +526,23 @@ class GameObjectBall extends GameObject {
 
         let nextPosition = this.getNextPosition();
         // check for top & bottom bounderies
-        if(nextPosition.y < 0){
+        if(nextPosition.y < 0 + this.topOffset){
             //this.position.y = 1;
             this.touchedTop();
             this.direction.y *= -1; // flips up/down direction
         }
-        else if(nextPosition.y > gameGrid.getHeight() -1){
+        else if(nextPosition.y > gameGrid.getHeight() -(1+this.botOffset)){
             //this.position.y = gameGrid.getHeight() -2;
             this.touchedBot();
             this.direction.y *= -1; // flips up/down direction
         } 
 
-        if(nextPosition.x < 0){
+        if(nextPosition.x < 0 + this.leftOffset){
             //this.position.x = 1;
             this.touchedLeft();
             this.direction.x *= -1; // flips up/down direction
         }
-        else if(nextPosition.x > gameGrid.getWidth()-1){
+        else if(nextPosition.x > gameGrid.getWidth()-(1+this.rightOffset)){
             //this.position.x = gameGrid.getWidth()-2;
             this.touchedRight();
             this.direction.x *= -1; // flips up/down direction

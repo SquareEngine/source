@@ -1,7 +1,8 @@
-// a simple PONG test
+// a simple PONG clone using the squareEngine 
 
 const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
+const SPEED_UP = 0.02;
 
 var gameGrid = new GameGrid(30, 20, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -22,43 +23,65 @@ dot.setRandomDirection();
 dot.start = function(gameGrid){
     this.leftPaddle = gameGrid.getGameObject("paddle1");
     this.rightPaddle = gameGrid.getGameObject("paddle2");
+
+    this.leftOffset = 1;
+    this.rightOffset = 1;
 }
 
 dot.touchedLeft = function(x){
-    if(this.leftPaddle._squareArray.length > 1){
-        this.leftPaddle._squareArray.pop();
+    let testVector = this.position.sum(new Vector(-1,0)); // check the position left to our dot
+    if( this.leftPaddle.checkVectorCollision(testVector) == false ){
+
+        if(this.leftPaddle._squareArray.length > 1){
+            this.leftPaddle.popSquare();
+            this.leftPaddle.updateBoundingBox()
+            this.leftPaddle.paddleLength -= 1;
+            gameGrid._gameSpeed += SPEED_UP;
+        }
+        else{
+            this.disableUpdate();
+            this.leftPaddle.disableUpdate();
+            this.rightPaddle.disableUpdate();
+            this.gameOver();
+            gameGrid.print("Right player won!")
+        }
     }
-    else{
-        this.disableUpdate();
-        this.leftPaddle.disableUpdate();
-        this.rightPaddle.disableUpdate();
-        this.gameOver();
-        gameGrid.print("Right player won!")
-    }
-    
 }
 
 dot.touchedRight = function(x){
-    if(this.rightPaddle._squareArray.length > 1){
-        this.rightPaddle._squareArray.pop();
-    }
-    else{
-        this.disableUpdate();
-        this.leftPaddle.disableUpdate();
-        this.rightPaddle.disableUpdate();
-        this.gameOver();
-        gameGrid.print("Left player won!")
+    let testVector = this.position.sum(new Vector(1,0)); // check the position left to our dot
+    if( this.rightPaddle.checkVectorCollision(testVector) == false ){
+
+        if(this.rightPaddle._squareArray.length > 1){
+            this.rightPaddle.popSquare();
+            this.rightPaddle.updateBoundingBox()
+            this.rightPaddle.paddleLength -= 1;
+            gameGrid._gameSpeed += SPEED_UP;
+        }
+        else{
+            this.disableUpdate();
+            this.leftPaddle.disableUpdate();
+            this.rightPaddle.disableUpdate();
+            this.gameOver();
+            gameGrid.print("Left player won!")
+        }
     }
 }
 
 
 for(let p=0; p<2; p++){
 
-    let name = "paddle" + (p+1);
+    let name = "bar" + (p+1)
+    let bar = gameGrid.createGameObject(name, "Basic");
+    for(let i=0; i<gameGrid._height-1; i++) bar.pushSquare(new Vector(0,1+i))
+    bar.setColor(130, 130, 130);
+    if(p>0) bar.position.x = gameGrid._width-1;
 
+    name = "paddle" + (p+1);
     let paddle = gameGrid.createGameObject(name, "Move");
-
     paddle.setColor(50, 50, 150);
+
+    paddle.paddleLength = 4;
 
     let posX = p * (gameGrid.getWidth()-1);
     let posY = parseInt(gameGrid.getHeight()/2)-2;
@@ -82,11 +105,9 @@ for(let p=0; p<2; p++){
 
     paddle.update = function(gameGrid){
         if(paddle.position.y < 0) paddle.position.y = 0;
-        else if(paddle.position.y > gameGrid.getHeight()-4) paddle.position.y = gameGrid.getHeight()-4;
-
-        if( this.checkVectorCollision( this.ball.getNextPosition() ) == true){
-            this.ball.direction.x *= -1;
-        }
+        else if(paddle.position.y > gameGrid.getHeight()-paddle.paddleLength){
+            paddle.position.y = gameGrid.getHeight()-paddle.paddleLength;
+        } 
     }
 }
 
