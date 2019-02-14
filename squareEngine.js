@@ -514,7 +514,7 @@ class GameObject {
     }
     // given a gameObject returns true or false if it's bounding box overlaps this bounding box
     checkCollision( gameObject ){
-        return this._bb.overlap( gameObject );
+        return this._bb.overlap( gameObject._bb );
     }
     // given a vactor returns true or false if it overlaps this object's bounding box
     checkVectorCollision( vector ){
@@ -523,7 +523,7 @@ class GameObject {
     // check if given gameObject's squares touches any of this object squares
     // warning: this is the most expensive collision check. Only use for non square/rectangular shapes
     // this methods is O(n^2)
-    checkSquareCollision( gameObject ){
+    /* checkSquareCollision( gameObject ){
         for(let i=0; i<this._squareArray.length; i++){
             // our square is the current square + the object position
             let mySquare = this._squareArray[i].sum( this.position );
@@ -534,26 +534,9 @@ class GameObject {
             }
         }
         return false;
-    }
+    } */
 
-    updateBoundingBox(){
-        let topLeft = this._squareArray[0].getTopLeft(false)
-        let botRight = this._squareArray[0].getBotRight(false)
-
-        for(let i=1; i<this._squareArray.length; i++){
-            let currentSquare = this._squareArray[i];
-            let currentTopLeft = currentSquare.getTopLeft(false);
-            let currentBotRight = currentSquare.getBotRight(false);
-
-            topLeft.x = Math.min(topLeft.x, currentTopLeft.x);
-            topLeft.y = Math.max(topLeft.y, currentTopLeft.x+1);
-            botRight.x = Math.min(botRight.x, currentBotRight.y);
-            botRight.y = Math.max(botRight.y, currentBotRight.y+1);
-        }
-
-        this._bb.topLeft = topLeft;
-        this._bb.botRight = botRight;
-    }
+    updateBoundingBox(){ this._bb.updateBoundingBox(); }
 }
 
 // a simple gameObject subClass that just adds movement keycodes to move up/down/left/right
@@ -734,12 +717,104 @@ class Vector{
     }
 }
 
-class Square {
-    constructor(gameObject, position=new Vector(0,0), size=new Vector(1,1), color=null){
-        this.position = position;
-        this.size = size;
-        this.color = color;
+
+
+class BoundingBox{
+    /* 
+    bounding box is just a faster way of detecting collision between 2 objects rather then chacking each square.
+    a bounding box only works for aquare/rectangle objects.
+    every gameObject has 1 by default. If you decide to use unique shapes then use checkCollisionSquare
+    */
+    constructor(gameObject, position=new Vector(0,0), size = new Vector(1,1)){ 
+        this.position = position; // relative position to our gameObject
+        this.size = size; // size = ( width/x/horizontal , height/y/vertical )
         this.gameObject = gameObject;
+    }
+
+    getWorldPosition(){ return this.position.sum( this.gameObject.position );}
+    getLocalPosition(){ return this.position.copy();}
+
+    getTopLeft(world=true){ // position - (size vector / 2 )
+        if(world==true) return this.getWorldPosition().sub( this.size.mul(0.5) );
+        else return this.getLocalPosition().sub( this.size.mul(0.5) );
+    }
+    getBotRight(world=true){ // position + (size vector / 2)
+        if(world==true) return this.getWorldPosition().sum( this.size.mul(0.5) );
+        else return this.getLocalPosition().sum( this.size.mul(0.5) );
+    }
+
+    getFullPosition(world=true){ // position + size vector
+        if(world==true) return this.getWorldPosition().sum( this.size );
+        else return this.getLocalPosition().sum( this.size );
+    }
+
+    // returns true if given vector (in world space) is inside the bounding box
+    isInside(vector){
+        let topLeft = this.getTopLeft();
+        let botRight = this.getBotRight();
+        if( vector.x > topLeft.x && vector.x < botRight.x){
+            if( vector.y > topLeft.y && vector.y < botRight.y) return true;
+        }
+        return false;
+    }
+
+    // returns true if given BB overlaps this BB
+    overlap(boundingBox){
+        let thisWorldPos = this.getWorldPosition();
+        let thisFullPos = this.getFullPosition();
+        let inputWorldPos = boundingBox.getWorldPosition();
+        let inputFullPos = boundingBox.getFullPosition();
+
+
+        if (thisWorldPos.x < inputFullPos.x &&
+            thisFullPos.x > inputWorldPos.x &&
+            thisWorldPos.y < inputFullPos.y &&
+            thisFullPos.y > inputWorldPos.y) return true
+
+        
+        /* let inputTopLeft = gameObject._bb.getTopLeft();
+        let inputTopRight = gameObject._bb.getTopRight();
+        let inputBotRight = gameObject._bb.getBotRight();
+        let inputBotLeft = gameObject._bb.getBotLeft();
+        if(this.isInside(inputTopLeft)==true) return true;
+        if(this.isInside(inputBotRight)==true) return true;
+        if(this.isInside(inputTopRight)==true) return true;
+        if(this.isInside(inputBotLeft)==true) return true; */
+        return false;
+    }
+
+    updateBoundingBox(){
+        let topLeft = this.gameObject._squareArray[0].getTopLeft(false);
+        let botRight = this.gameObject._squareArray[0].getBotRight(false);
+
+        for(let i=1; i<this.gameObject._squareArray.length; i++){
+            let currentSquare = this.gameObject._squareArray[i];
+            let currentTopLeft = currentSquare.getTopLeft(false);
+            let currentBotRight = currentSquare.getBotRight(false);
+
+            topLeft.x = Math.min(topLeft.x, currentTopLeft.x);
+            topLeft.y = Math.max(topLeft.y, currentTopLeft.x);
+            botRight.x = Math.min(botRight.x, currentBotRight.y);
+            botRight.y = Math.max(botRight.y, currentBotRight.y);
+        }
+        let size = new Vector(
+            Math.abs(topLeft.x) + Math.abs(botRight.x),
+            Math.abs(topLeft.y) + Math.abs(botRight.y)
+        )
+        let position = new Vector(
+            (topLeft.x + botRight.x)/2,
+            (topLeft.y + botRight.y)/2
+        )
+
+        this.gameObject._bb.position = position;
+        this.gameObject._bb.size = size;
+    }
+}
+
+class Square extends BoundingBox{
+    constructor(gameObject, position=new Vector(0,0), size=new Vector(1,1), color=null){
+        super(gameObject=gameObject, position=position, size=size);
+        this.color = color;
     }
 
     setRandomColor(){this.color = RGB.makeRandomColor();}
@@ -750,103 +825,16 @@ class Square {
     }
 
     renderAt(position){
-        this.drawSquare(position, this.size, this.color)
+        this._drawSquare(position, this.size, this.color)
     }
 
-    drawSquare(position, size=new Vector(1,1), color=RGB.makeRandomColor() ){
+    _drawSquare(position, size=new Vector(1,1), color=RGB.makeRandomColor() ){
         position = position.mul( this.gameObject._gameGrid._moveUnits );
         size = size.mul( this.gameObject._gameGrid._moveUnits );
         this.gameObject._gameGrid._context.fillStyle = color.colorString();
         this.gameObject._gameGrid._context.fillRect( position.x, position.y, size.x, size.y );
     }
 
-    getAbsolutePosition(){
-        return this.position.sum(this.gameObject.position);
-    }
-    getPosition(){return this.position.copy();}
-
-    getTopLeft(absolute=true){
-        let topLeft;
-        if(absolute==true) topLeft = this.getAbsolutePosition();
-        else topLeft = this.getPosition();
-        topLeft = topLeft.sub( this.size.mul(0.5) );
-        return topLeft;
-    }
-
-    getTopRight(absolute=true){
-        let topRight;
-        if(absolute==true) topRight = this.getAbsolutePosition();
-        else topRight = this.getPosition();
-        topRight = topRight.sub( this.size.mul(0.5) );
-        topRight.x += this.size.x;
-        return topRight;
-    }
-
-    getBotRight(absolute=true){
-        let botRight;
-        if(absolute==true) botRight = this.getAbsolutePosition();
-        else botRight = this.getPosition();
-        botRight = botRight.sum( this.size.mul(0.5) );
-        return botRight;
-    }
-
-    getBotLeft(absolute=true){
-        let botLeft;
-        if(absolute==true) botLeft = this.getAbsolutePosition();
-        else botLeft = this.getPosition();
-        botLeft = botLeft.sum( this.size.mul(0.5) );
-        botLeft.x -= this.size.x;
-        return botLeft;
-    }
-
-}
-
-class BoundingBox{
-    /* 
-    bounding box is just a faster way of detecting collision between 2 objects rather then chacking each square.
-    a bounding box only works for aquare/rectangle objects.
-    every gameObject has 1 by default. If you decide to use unique shapes then use checkCollisionSquare
-    */
-    constructor(gameObject){ // these are 2 x vectors
-        this.topLeft = new Vector(-0.5,-0.5);
-        this.botRight = new Vector(0.5,0.5)
-        this.gameObject = gameObject;
-    }
-    // returns true if given vector is inside the bounding box
-    isInside(vector){
-        //vector = vector.sum( new Vector(0.5, 0.5) );
-        let topLeft= this.getTopLeft();
-        let botRight = this.getBotRight();
-        if( vector.x > topLeft.x && vector.x < botRight.x){
-            if( vector.y > topLeft.y && vector.y < botRight.y) return true;
-        }
-        return false;
-    }
-    // returns true if given BB overlaps this BB
-    overlap(gameObject){
-        let inputTopLeft = gameObject._bb.getTopLeft();
-        let inputTopRight = gameObject._bb.getTopRight();
-        let inputBotRight = gameObject._bb.getBotRight();
-        let inputBotLeft = gameObject._bb.getBotLeft();
-        if(this.isInside(inputTopLeft)==true) return true;
-        if(this.isInside(inputBotRight)==true) return true;
-        if(this.isInside(inputTopRight)==true) return true;
-        if(this.isInside(inputBotLeft)==true) return true;
-        return false;
-    }
-
-    getTopLeft(){ return this.topLeft.sum( this.gameObject.position );}
-    getTopRight(){ 
-        let topRigth = this.topLeft.sum( this.gameObject.position );
-        topRigth.x += this.botRight.x;
-        return topRigth;
-    }
-    getBotRight(){return this.botRight.sum( this.gameObject.position );}
-    getBotLeft(){
-        let botLeft = this.botRight.sum( this.gameObject.position );
-        botLeft.x += this.topLeft.x;
-        return botLeft;
-    }
 }
 
 class RGB{
