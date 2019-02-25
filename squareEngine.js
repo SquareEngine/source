@@ -6,6 +6,7 @@ var tileEnum = {EMPTY:0};
 // a simple enum with our 4 possible game states
 var gameStateEnum = {START:0, UPDATE:1, PAUSED:2, OVER:3};
 
+
 /*
 The game engine class.
 There should be only 1 gameGrid object per game file.
@@ -45,19 +46,16 @@ class GameGrid{
         this._lastUpdate;
         this._deltaTime;
         this._stepCounter = 0;
-        this._updateDelay = 0;
-        this._gameSpeed = 1;
+        this._updateStep = 0;
         
-        this.setGameSpeed(gameSpeed);
-
         // game states        
         this._gameState = gameStateEnum.START;
     }
 
     _tick(){ // this method gets called about 60 times per second
         // get delta time
-        this._now = Date.now();
-        this._deltaTime = this._now - this._lastUpdate;
+        this._now = new Date().getTime();
+        this._deltaTime = (this._now - this._lastUpdate)/1000; // milliseconds
         this._lastUpdate = this._now;
 
         // a game simple state machine
@@ -95,8 +93,8 @@ class GameGrid{
     _update(){
         // step counter can be used to make the game have stepped updates
         // set the stepCounter to 0 if you don't want stepped animation
-        this._stepCounter += this._deltaTime * this._gameSpeed;
-        if( this._stepCounter >= this._updateDelay){
+        this._stepCounter += this._deltaTime;
+        if( this._stepCounter >= this._updateStep){
 
             this.preUpdate()       
             for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._preUpdate(this);
@@ -132,6 +130,7 @@ class GameGrid{
     _gameOver(){ // game over screen - static - last game shot + UI
         this._render();
         this.renderGameOverUI()
+        this.gameOver();
         return true;
     } 
     _pause(){ // pause screen - static - current game paused + UI
@@ -176,6 +175,7 @@ class GameGrid{
         this.renderText("PAUSE");
     }
     reset(){return true;} 
+    gameOver(){return true;} 
 
     inputKeyDown(keyCode){
         switch(keyCode){
@@ -205,8 +205,8 @@ class GameGrid{
         if(gameObjectClass==undefined){
             throw new Error("Error: " + objectType + " is not a valid gameObject");
         }
-        let gameObject = new gameObjectClass(x, y, canUpdate, canRender);
-        gameObject._gameGrid = this;
+        let gameObject = new gameObjectClass(this, x, y, canUpdate, canRender);
+        gameObject._name = name;
         this._gameObjects.push(gameObject);
         this._gameObjectsDict[name] = gameObject;
         return gameObject;
@@ -219,6 +219,8 @@ class GameGrid{
     // get width and height units
     getWidth(){return this._width;}
     getHeight(){return this._height;}
+    getPixelWidth(){return this._width * this._moveUnits;}
+    getPixelHeight(){return this._height * this._moveUnits;}
     getMoveUnit(){return this._moveUnits;}
 
     // changes the game backGround color
@@ -231,17 +233,10 @@ class GameGrid{
     printAdd(text){this._logger.innerHTML += "<br>" + text;}
     erase(){this._logger.innerHTML = "";}
 
-    // changes the game speed & step values
-    setGameSpeed(speed){
-        if(speed<1) this._gameSpeed = 1;
-        else this._gameSpeed=speed;
-    }
-    getGameSpeed(){return this._gameSpeed;}
-
-    setUpdateDelay(delay){
-        if(delay<0) this._updateDelay = 0;
-        else this._updateDelay = delay;}
-    getUpdateDelay(){return this._updateDelay;}
+    setUpdateStep(delay){
+        if(delay<0) this._updateStep = 0;
+        else this._updateStep = delay;}
+    getUpdateStep(){return this._updateStep;}
 
     // renders a square at x & y positions with given size and color
     renderSquare(position, size=new Vector(1,1), color=RGB.makeRandomColor(), scaleOffset=true){
@@ -252,9 +247,12 @@ class GameGrid{
         this._context.fillRect( position.x, position.y, size.x, size.y);
     }
 
-    renderText(text, positionX=0, positionY=this._canvas.height/2, size=50, color=new RGB(0,0,0)){
+    renderText(text, positionX=null, positionY=null, size=40, color=new RGB(0,0,0)){
+        if(positionX==null) positionX = (this.getPixelWidth()/2.0); //- ((text.length/2.0)*this._moveUnits);
+        if(positionY==null) positionY = (this.getPixelHeight()/2.0); //- (size/2);
         this._context.fillStyle = color.colorString();
         this._context.font = size + 'px Arial';
+        this._context.textAlign = "center"; 
         this._context.fillText(text, positionX, positionY);
     }
 
@@ -267,9 +265,11 @@ class GameObject {
     It shares many methods with gameGrid such as update(), render(), inputKeyUp & inputKeyDown().
     gameGrid loops through all of its gameObject and call these methods during render & update.
     */
-    constructor(x=0, y=0, canUpdate=true, canRender=true){
+    constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true){
         // this attributes can be used/changed
+        this._name
         this.position = new Vector(x,y); 
+        this.prevPosition = new Vector(0,0);
         this.direction = new Vector(0,0);
 
         // do not access or override these. Use methods below
@@ -278,14 +278,13 @@ class GameObject {
         this._squareArray = [];
         this._color = new RGB(255, 0, 0); 
         this._wrapAround = true;
-        this._gameGrid = null;
+        this._gridSnap = false;
+        this._gameGrid = gameGrid;
         this._canMove = true;
         this._speed = 1.0;
-        this._gridSnap = true;
-        this._updateSpeed = 1;
-        this._updateDelay = 0;
+        this._updateStep = 0;
         this._stepCounter = 0;
-        this._bb = new BoundingBox(this);
+        this._bb = new BoundingBox(new Vector(0,0), new Vector(1,1), this);
         this._autoBB = true;
 
         this.pushSquare( new Square() );
@@ -294,8 +293,8 @@ class GameObject {
     _preUpdate(gameGrid){ if(this._canUpdate == true) this.preUpdate(gameGrid); }
     _update(gameGrid){
         if(this._canUpdate == true) {
-            this._stepCounter += gameGrid.getDeltaTime() * this._updateSpeed;
-            if(this._stepCounter >= this._updateDelay){
+            this._stepCounter += gameGrid.getDeltaTime();
+            if(this._stepCounter >= this._updateStep){
                 if(this._canMove==true) this.move();
                 this.update(gameGrid); 
                 this._stepCounter = 0; 
@@ -345,6 +344,7 @@ class GameObject {
     //################################# methods to override ####################################
     //##########################################################################################
 
+    getName(){return this._name;}
     hide(){this._canRender=false;}
     show(){this._canRender=true;}
     enableUpdate(){this._canUpdate=true;}
@@ -355,20 +355,14 @@ class GameObject {
     setMoveOff(){this._canMove=false;}
     setGridSnapOn(){this._gridSnap=true;}
     setGridSnapOff(){this._gridSnap=false;}
-    setUpdateDelay(updateDelay){
-        if(updateDelay<0) this._updateDelay=0;
-        else this._updateDelay=updateDelay;}
-    getUpdateDelay(){return this._updateDelay;}
-    setUpdateSpeed(updateSpeed){
-        if(updateSpeed<1)this._updateSpeed=1
-        else this._updateSpeed=updateSpeed;}
-    getUpdateSpeed(){return this._updateSpeed;}
-    lowerUpdateSpeed(value){
-        let newValue = this._updateSpeed - value;
-        if(newValue < 1.0) this._updateSpeed = 1.0;
-        else this._updateSpeed = newValue;
-    }
-    increaseUpdateSpeed(value){this._updateSpeed += Math.abs(value);} // abs in case someone tries to pass negative numbers
+    setUpdateStep(updateStep){
+        if(updateStep<0) this._updateStep=0;
+        else this._updateStep=updateStep;}
+    getUpdateStep(){return this.updateStep;}
+
+    setSpeed(speed){this._speed=parseFloat(speed);}
+    getSpeed(){return this._speed;}
+    setDirection(x,y){this.direction = new Vector(x,y);}
 
     gameOver(){this._gameGrid._setGameToOver()};
     resetGame(){this._gameGrid._reset()};
@@ -376,7 +370,7 @@ class GameObject {
 
     pushSquare(square){ // pushes a square to your squareArray
         square.gameObject = this;
-        if(square.color==null) square.color = this._color;
+        if(square._color==null) square._color = this._color;
         this._squareArray.push(square);
         if(this._autoBB==true) this.updateBoundingBox();
     }
@@ -395,6 +389,7 @@ class GameObject {
         if(this._autoBB==true) this.updateBoundingBox();
         return returnData;
     }
+    getSquare(index=0){return this._squareArray[index];}
 
     // when overriding these methods dont forget to pass a gameGrid input
     preUpdate(gameGrid){return true}; 
@@ -411,67 +406,37 @@ class GameObject {
     } */
 
     setColor(r=150, g=150, b=150){
-        this._color.r = r;
-        this._color.g = g;
-        this._color.b = b;
+        this._color.setColor(r,g,b);
         for(let i=0; i<this._squareArray.length; i++){
-            this._squareArray[i].color = this._color;
+            this._squareArray[i]._color = this._color;
         }
+    }
+    setColorObject(rgbObject){this._color=rgbObject;}
+
+    setRandomColor(){ this._color.randomColor();}
+
+    getPosition(){return this.position.copy();}
+    getPrevPosition(){return this.prevPosition.copy();}
+
+    getNextPosition(){ 
+        let nextPosition = this.direction.normalized();
+        return nextPosition.mul( this._gameGrid.getDeltaTime() * this._speed );
     }
 
-    move(){
-        /* if(this._gridSnap==true){
-            x = parseInt(x);
-            y = parseInt(y);
-        }
-        else{
-            x *= this._gameGrid.getDeltaTime();
-            y *= this._gameGrid.getDeltaTime();
-        }
-        this.position.x  = this.horizontalCheck(this.position.x + x);
-        this.position.y  = this.verticalCheck(this.position.y + y); */
-        //this.direction.normalize();
-        //this.direction.mul( this._gameGrid.getDeltaTime() * this._speed);
-        this.moveTo(this.direction);
-    }
+    move(){ this.moveTo( this.getNextPosition() ); }
 
     moveTo(vector, absolute=false){
+        this.prevPosition = this.getPosition();
         if(absolute==true) this.position = vector;
         else this.position = this.position.sum(vector);
-        this.position = this.screenCheck(this.position );
+
+        let screenVector = this.screenCheck( this.getPosition() );
+        if(screenVector.status) this.position = screenVector;
 
         if(this._gridSnap==true){
             this.position.x = parseInt(this.position.x) + 0.5;
             this.position.y = parseInt(this.position.y) + 0.5;
         }
-    }
-
-    getNextPosition(){
-        return new Vector(this.position.x + this.direction.x, this.position.y + this.direction.y);
-    }
-
-    horizontalCheck(x){
-        if(x >= this._gameGrid._width){
-            if(this._wrapAround==true) x = x % this._gameGrid._width;
-            //x = this.screenRight(x);
-        }
-        else if (x < 0){
-            if(this._wrapAround==true) x = this._gameGrid._width + x;
-            //x = this.screenLeft(x);
-        } 
-        return x;
-    }
-
-    verticalCheck(y){
-        if(y >= this._gameGrid._height){
-            if(this._wrapAround==true) y = y % this._gameGrid._height;
-            //y = this.screenBot(y);
-        }
-        else if (y < 0){
-            if(this._wrapAround==true) y = this._gameGrid._height + y;
-            //y = this.screenTop(y);
-        } 
-        return y;
     }
 
     screenCheck(vector){
@@ -523,44 +488,43 @@ class GameObject {
     // check if given gameObject's squares touches any of this object squares
     // warning: this is the most expensive collision check. Only use for non square/rectangular shapes
     // this methods is O(n^2)
-    /* checkSquareCollision( gameObject ){
+    checkSquareCollision( gameObject ){
         for(let i=0; i<this._squareArray.length; i++){
             // our square is the current square + the object position
-            let mySquare = this._squareArray[i].sum( this.position );
+            let mySquare = this._squareArray[i];
             for(let j=0; j<gameObject._squareArray.length; j++){
                 // given gameObject current square + its position
-                let givenSquare = gameObject._squareArray[j].sum( gameObject.position );
-                if(mySquare.isEqual(givenSquare)==true) return true;
+                let givenSquare = gameObject._squareArray[j];
+                if(mySquare.overlap(givenSquare)==true) return true;
             }
         }
         return false;
-    } */
+    } 
 
     updateBoundingBox(){ this._bb.updateBoundingBox(); }
 }
 
 // a simple gameObject subClass that just adds movement keycodes to move up/down/left/right
 class GameObjectMove extends GameObject{
-    constructor(x=0, y=0, canUpdate=true, canRender=true){
-        super(x=x, y=y, canUpdate=canUpdate, canRender=canRender);
-        this.moveKeys = {UP:keyCodesEnum.W, DOWN:keyCodesEnum.S, LEFT:keyCodesEnum.A, RIGHT:keyCodesEnum.D};
-        this.moveSpeed = 1;
-
+    constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true, wasd=false){
+        super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender);
+        if(wasd) this.moveKeys = {UP:keyCodesEnum.W, DOWN:keyCodesEnum.S, LEFT:keyCodesEnum.A, RIGHT:keyCodesEnum.D};
+        else this.moveKeys = {UP:keyCodesEnum.UP, DOWN:keyCodesEnum.DOWN, LEFT:keyCodesEnum.LEFT, RIGHT:keyCodesEnum.RIGHT};
     }
 
     _inputKeyDown(keyCode){
         switch(keyCode){
             case(this.moveKeys.UP):
-                this.direction.y=-this.moveSpeed;
-                break;
-            case(this.moveKeys.LEFT):
-                this.direction.x=-this.moveSpeed;
+                this.direction.y=-1;
                 break;
             case(this.moveKeys.DOWN):
-                this.direction.y=this.moveSpeed;
+                this.direction.y=1;
+                break;
+            case(this.moveKeys.LEFT):
+                this.direction.x=-1;
                 break;
             case(this.moveKeys.RIGHT):
-                this.direction.x=this.moveSpeed;
+                this.direction.x=1;
                 break;
         }
         this.inputKeyDown();
@@ -571,11 +535,11 @@ class GameObjectMove extends GameObject{
             case(this.moveKeys.UP):
                 this.direction.y=0;
                 break;
-            case(this.moveKeys.LEFT):
-                this.direction.x=0;
-                break;
             case(this.moveKeys.DOWN):
                 this.direction.y=0;
+                break;
+            case(this.moveKeys.LEFT):
+                this.direction.x=0;
                 break;
             case(this.moveKeys.RIGHT):
                 this.direction.x=0;
@@ -585,13 +549,62 @@ class GameObjectMove extends GameObject{
     }
 }
 
+class GameObjectPaddle extends GameObjectMove{
+    constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true, wasd=false, vertical=true){
+        super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender, wasd=wasd);
+        this._isVertical;
+        this._minLimit;
+        this._maxLimit;
+
+        if(vertical) this.setVertical();
+        else this.setHorizontal();
+        this.setAutoLimit();
+            
+    }
+
+    setAutoLimit(){
+        if(this.isVertical()) this._maxLimit = this._gameGrid.getHeight() - (this._bb.size.y/2);
+        else this._maxLimit = this._gameGrid.getWidth() - (this._bb.size.x/2);
+
+        if(this.isVertical()) this._minLimit = this._bb.size.y/2;
+        else this._minLimit = this._bb.size.x/2;
+    }
+
+    setVertical(){
+        this._isVertical = true;
+        if(this.wasd) this.moveKeys = {UP:keyCodesEnum.W, DOWN:keyCodesEnum.S, LEFT:null, RIGHT:null};
+        else this.moveKeys = {UP:keyCodesEnum.UP, DOWN:keyCodesEnum.DOWN, LEFT:null, RIGHT:null};
+    }
+
+    isVertical(){return this._isVertical;}
+
+    setHorizontal(){
+        this._isVertical = false;
+        if(this.wasd) this.moveKeys = {UP:null, DOWN:null, LEFT:keyCodesEnum.LEFT, RIGHT:keyCodesEnum.RIGHT};
+        else this.moveKeys = {UP:null, DOWN:null, LEFT:keyCodesEnum.LEFT, RIGHT:keyCodesEnum.RIGHT};
+    }
+
+    isHorizontal(){return !this._isVertical;}
+
+    postUpdate(gameGrid){
+        if(this.position.x<this._minLimit){
+            this.position.x=this._minLimit;
+        }
+        else if (this.position.x>this._maxLimit){
+            this.position.x=this._maxLimit;
+        }   
+    }
+}
+
 class GameObjectBall extends GameObject {
-    constructor(x=0, y=0, canUpdate=true, canRender=true){
-        super(x=x, y=y, canUpdate=canUpdate, canRender=canRender);
+    constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true){
+        super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender);
         this.leftOffset = 0;
         this.rightOffset = 0;
         this.topOffset = 0;
         this.botOffset = 0;
+        this.autoSetOffsets();
+        this._wrapAround = false;
     }
 
     setRandomDirection(len=1, normalize=false){
@@ -607,29 +620,36 @@ class GameObjectBall extends GameObject {
         }
     }
 
-    preUpdate(gameGrid){
+    autoSetOffsets(){
+        this.leftOffset = this._bb.size.x/2;
+        this.rightOffset = this._bb.size.x/2;
+        this.topOffset = this._bb.size.y/2;
+        this.botOffset = this._bb.size.y/2;
+    }
+
+    postUpdate(gameGrid){
         // here we add functionality to react to the game screen bounderies
 
-        let nextPosition = this.getNextPosition();
+        let currentPos = this.getPosition();
         // check for top & bottom bounderies
-        if(nextPosition.y < 0 + this.topOffset){
-            //this.position.y = 1;
+        if(currentPos.y < 0 + this.topOffset){
+            this.position.y = 0 + this.topOffset;
             this.touchedTop();
             this.direction.y *= -1; // flips up/down direction
         }
-        else if(nextPosition.y > gameGrid.getHeight() -(1+this.botOffset)){
-            //this.position.y = gameGrid.getHeight() -2;
+        else if(currentPos.y > gameGrid.getHeight() - ( this.botOffset)){
+            this.position.y = gameGrid.getHeight() - ( this.botOffset);
             this.touchedBot();
             this.direction.y *= -1; // flips up/down direction
         } 
 
-        if(nextPosition.x < 0 + this.leftOffset){
-            //this.position.x = 1;
+        if(currentPos.x < 0 + this.leftOffset){
+            this.position.x = 0 + this.leftOffset;
             this.touchedLeft();
             this.direction.x *= -1; // flips up/down direction
         }
-        else if(nextPosition.x > gameGrid.getWidth()-(1+this.rightOffset)){
-            //this.position.x = gameGrid.getWidth()-2;
+        else if(currentPos.x > gameGrid.getWidth() - ( this.rightOffset)){
+            this.position.x = gameGrid.getWidth() - ( this.rightOffset);
             this.touchedRight();
             this.direction.x *= -1; // flips up/down direction
         } 
@@ -641,19 +661,25 @@ class GameObjectBall extends GameObject {
     touchedRight(){return true;}
 }
 
-class GameObjectPaddle extends GameObject{
-    constructor(x=0, y=0, canUpdate=true, canRender=true){
-        super(x=x, y=y, canUpdate=canUpdate, canRender=canRender);
-
-    }
-}
-
 class Vector{
     // simple vector class to represent x & y coordinates
     constructor(x=0,y=0){
+        if( isNaN(x) || isNaN(y) ) throw Error("Vector got a NaN");
         this.x = x;
         this.y = y;
     }
+    set x(x){
+        if( isNaN(x) ) throw Error("Vector got a NaN X");
+        this._x = x;
+    }
+    get x(){return this._x;}
+
+    set y(y){
+        if( isNaN(y) ) throw Error("Vector got a NaN Y");
+        this._y = y;
+    }
+    get y(){return this._y;}
+
     sum(value){// returns a new vector that is the sum of given vector/value and this vector
         let returnVector = new Vector();
         if(value.constructor === Vector){
@@ -698,8 +724,15 @@ class Vector{
     }
     normalize(){ // turns it into a unit vector (vector with length == 1)
         let length = this.len();
-        this.x /= length;
-        this.y /= length;
+        if(length>0){
+            this.x /= length;
+            this.y /= length;
+        }
+        else{
+            this.x = 0;
+            this.y = 0;
+        }
+        
     }
     normalized(){
         let returnVector = this.copy();
@@ -709,7 +742,7 @@ class Vector{
     // check if given vector is equal to this vector
     isEqual(vector){
         if(this.x != vector.x) return false;
-        if(this.y != vector.y) return false;
+        if(this.y != vector.y) return false;ou
         return true;
     }
     copy(){
@@ -725,13 +758,27 @@ class BoundingBox{
     a bounding box only works for aquare/rectangle objects.
     every gameObject has 1 by default. If you decide to use unique shapes then use checkCollisionSquare
     */
-    constructor(gameObject, position=new Vector(0,0), size = new Vector(1,1)){ 
+    constructor(position=new Vector(0,0), size = new Vector(1,1), gameObject=null){ 
         this.position = position; // relative position to our gameObject
         this.size = size; // size = ( width/x/horizontal , height/y/vertical )
         this.gameObject = gameObject;
     }
 
-    getWorldPosition(){ return this.position.sum( this.gameObject.position );}
+    setSize(x=1,y=1){
+        this.size.x = x;
+        this.size.y = y;
+        if(this.gameObject) this.gameObject.updateBoundingBox();
+    }
+
+    setPosition(x=0,y=0){
+        this.position.x = x;
+        this.position.y = y;
+    }
+
+    getWorldPosition(){ 
+        if(this.gameObject) return this.position.sum( this.gameObject.position );
+        else return this.getLocalPosition();
+    }
     getLocalPosition(){ return this.position.copy();}
 
     getTopLeft(world=true){ // position - (size vector / 2 )
@@ -741,11 +788,6 @@ class BoundingBox{
     getBotRight(world=true){ // position + (size vector / 2)
         if(world==true) return this.getWorldPosition().sum( this.size.mul(0.5) );
         else return this.getLocalPosition().sum( this.size.mul(0.5) );
-    }
-
-    getFullPosition(world=true){ // position + size vector
-        if(world==true) return this.getWorldPosition().sum( this.size );
-        else return this.getLocalPosition().sum( this.size );
     }
 
     // returns true if given vector (in world space) is inside the bounding box
@@ -760,30 +802,36 @@ class BoundingBox{
 
     // returns true if given BB overlaps this BB
     overlap(boundingBox){
-        let thisWorldPos = this.getWorldPosition();
-        let thisFullPos = this.getFullPosition();
-        let inputWorldPos = boundingBox.getWorldPosition();
-        let inputFullPos = boundingBox.getFullPosition();
+        let thisTopLeft = this.getTopLeft();
+        let thisBotRight = this.getBotRight();
+        let inputTopLeft = boundingBox.getTopLeft();
+        let inputBotRight = boundingBox.getBotRight();
 
 
-        if (thisWorldPos.x < inputFullPos.x &&
-            thisFullPos.x > inputWorldPos.x &&
-            thisWorldPos.y < inputFullPos.y &&
-            thisFullPos.y > inputWorldPos.y) return true
+        if (thisTopLeft.x < inputBotRight.x &&
+            thisBotRight.x > inputTopLeft.x &&
+            thisTopLeft.y < inputBotRight.y &&
+            thisBotRight.y > inputTopLeft.y) {
+            
+                // here we return a boundingBox that is the intersection between the 2 BB above
+                let overlapBB = new BoundingBox();
 
-        
-        /* let inputTopLeft = gameObject._bb.getTopLeft();
-        let inputTopRight = gameObject._bb.getTopRight();
-        let inputBotRight = gameObject._bb.getBotRight();
-        let inputBotLeft = gameObject._bb.getBotLeft();
-        if(this.isInside(inputTopLeft)==true) return true;
-        if(this.isInside(inputBotRight)==true) return true;
-        if(this.isInside(inputTopRight)==true) return true;
-        if(this.isInside(inputBotLeft)==true) return true; */
+                overlapBB.size.x = Math.abs(
+                    Math.max(thisTopLeft.x, inputTopLeft.x)
+                    - Math.min(thisBotRight.x, inputBotRight.x) );
+
+                overlapBB.size.y = Math.abs(
+                    Math.max(thisTopLeft.y, inputTopLeft.y)
+                    - Math.min(thisBotRight.y, inputBotRight.y) );
+
+                return overlapBB
+            }
         return false;
     }
 
     updateBoundingBox(){
+        if(! this.gameObject) return false;
+
         let topLeft = this.gameObject._squareArray[0].getTopLeft(false);
         let botRight = this.gameObject._squareArray[0].getBotRight(false);
 
@@ -808,16 +856,22 @@ class BoundingBox{
 
         this.gameObject._bb.position = position;
         this.gameObject._bb.size = size;
+        return true;
     }
 }
 
 class Square extends BoundingBox{
-    constructor(gameObject, position=new Vector(0,0), size=new Vector(1,1), color=null){
-        super(gameObject=gameObject, position=position, size=size);
-        this.color = color;
+    constructor(position=new Vector(0,0), size=new Vector(1,1), gameObject=null, color=null){
+        super(position=position, size=size, gameObject=gameObject);
+        this._color = color;
     }
 
-    setRandomColor(){this.color = RGB.makeRandomColor();}
+    setColor(r,g,b){this._color.setColor(r,g,b);}
+    
+    setRandomColor(){
+        if(this._color==null) this._color = RGB.makeRandomColor();
+        else this._color.setColor(r,g,b);
+    }
 
     render(){
         let position = this.getTopLeft();
@@ -825,7 +879,7 @@ class Square extends BoundingBox{
     }
 
     renderAt(position){
-        this._drawSquare(position, this.size, this.color)
+        this._drawSquare(position, this.size, this._color)
     }
 
     _drawSquare(position, size=new Vector(1,1), color=RGB.makeRandomColor() ){
@@ -839,26 +893,28 @@ class Square extends BoundingBox{
 
 class RGB{
     constructor(r=0, g=0, b=0){
+        this.r=0;
+        this.g=0;
+        this.b=0;
+        this.setColor(r,g,b)
+    }
+
+    setColor(r,g,b){
+        if(r>255) r = 255;
+        else if (r<0)r=0;
         this.r = r;
+    
+        if(g>255) g = 255;
+        else if (g<0) g=0;
         this.g = g;
+    
+        if(b>255) b = 255;
+        else if (b<0) b=0;
         this.b = b;
     }
 
     colorString(){
-        let rgbText = "rgb(";
-    
-        if(this.r>255) this.r = 255;
-        else if (this.r<0)this.r=0;
-        rgbText += this.r + ",";
-    
-        if(this.g>255) this.g = 255;
-        else if (this.g<0)this.g=0;
-        rgbText += this.g + ",";
-    
-        if(this.b>255) this.b = 255;
-        else if (this.b<0)this.b=0;
-        rgbText += this.b + ")";
-    
+        let rgbText = "rgb(" + this.r + "," + this.g + "," + this.b + ")";
         return rgbText;
     }
 
