@@ -1,15 +1,15 @@
 // a simple PONG clone using the squareEngine 
 
 const CANVAS_SCALE = 20;
-const SPEED_UP = 1;
+const SPEED_UP = 3;
 
-var gameGrid = new GameGrid(30, 20, CANVAS_SCALE);
+var gameGrid = new GameGrid(36, 20, CANVAS_SCALE);
 
 gameGrid.color1 = RGB.makeRandomColor();
 gameGrid.color2 = RGB.makeRandomColor();
 gameGrid.colorLerpCounter = 0
 gameGrid.colorLerpDirection = false;
-gameGrid.colorLerpSpeed = 10000;
+gameGrid.colorLerpSpeed = 10;
 
 gameGrid.update = function(){
     
@@ -41,28 +41,27 @@ let midV = parseInt(gameGrid.getHeight()/2)
 // make dot first so it updates before paddles
 let dot = gameGrid.createGameObject("dot", "Ball", x=midH, y=midV);
 
-dot.setWrapAroundOff();
-//dot.setGridSnapOn();
 dot.setRandomDirection(normalize=true);
-//dot.direction = dot.direction.mul(0.01)
-dot.setUpdateDelay(100);
+dot.setSpeed(15);
 dot.setColor(250,0,0);
 
 dot.start = function(gameGrid){
     this.leftPaddle = gameGrid.getGameObject("paddle1");
     this.rightPaddle = gameGrid.getGameObject("paddle2");
-    this.leftOffset = 1;
-    this.botOffset = -1;
+    this.leftOffset += 1;
+    this.rightOffset += 1;
 }
 
 dot.touchedLeft = function(x){
     let testVector = this.position.sum(new Vector(-1,0)); // check the position left to our dot
     if( this.leftPaddle.checkVectorCollision(testVector) == false ){
 
-        if(this.leftPaddle._squareArray.length > 1){
-            this.leftPaddle.popSquare();
+        if(this.leftPaddle.paddleLength > 1){
+
             this.leftPaddle.paddleLength -= 1;
-            this.increaseUpdateSpeed( SPEED_UP); // we can now lower or increase speed
+            this.leftPaddle.getSquare().setSize(1, this.leftPaddle.paddleLength );
+            this.leftPaddle.setAutoLimit();
+            this.setSpeed( this.getSpeed() + SPEED_UP); // we can now lower or increase speed
         }
         else{
             this.gameOver();
@@ -75,10 +74,12 @@ dot.touchedRight = function(x){
     let testVector = this.position.sum(new Vector(1,0)); // check the position left to our dot
     if( this.rightPaddle.checkVectorCollision(testVector) == false ){
 
-        if(this.rightPaddle._squareArray.length > 1){
-            this.rightPaddle.popSquare();
+        if(this.rightPaddle.paddleLength > 1){
+
             this.rightPaddle.paddleLength -= 1;
-            this.increaseUpdateSpeed( SPEED_UP);
+            this.rightPaddle.getSquare().setSize(1, this.rightPaddle.paddleLength );
+            this.rightPaddle.setAutoLimit();
+            this.setSpeed( this.getSpeed() + SPEED_UP); // we can now lower or increase speed
         }
         else{
             this.gameOver();
@@ -91,54 +92,30 @@ dot.touchedRight = function(x){
 for(let p=0; p<2; p++){
 
     let name = "bar" + (p+1)
-    let bar = gameGrid.createGameObject(name, "Basic");
-    bar.setColor(130,130,130);
-    bar.moveTo(0.5,0)
-    for(let i=0; i<gameGrid._height-1; i++){
-        let square = new Square();
-        square.position = new Vector(0,1+i) ;
-        bar.pushSquare( square );
-    } 
-    bar.setColor(130, 130, 130);
-    if(p>0) bar.position.x = gameGrid._width-0.5;
+    let bar = gameGrid.createGameObject( name, "Basic", 
+        x = 0.5 + (p * (gameGrid.getWidth()-1)), 
+        y = gameGrid.getHeight() /2 );
 
-    //############## padddles
+    bar.setColor(130,130,130);
+    bar.getSquare().setSize(1, gameGrid.getHeight());
+
+    //############## paddles
 
     name = "paddle" + (p+1);
-    let paddle = gameGrid.createGameObject(name, "Move");
+    let paddle = gameGrid.createGameObject( name, "Paddle", 
+        x = 0.5 + (p * (gameGrid.getWidth()-1)), 
+        y = gameGrid.getHeight() / 2 );
+
     paddle.setColor(50, 50, 150);
-    paddle.moveKeys.RIGHT = null;
-    paddle.moveKeys.LEFT = null;
-    paddle.setWrapAroundOff()
-    paddle.setUpdateDelay(50);
-    paddle.paddleLength = 4;
+    paddle.setSpeed(10);
+    paddle.paddleLength = 5;
+    paddle.getSquare().setSize(1,5);
+    paddle.setAutoLimit();
 
-    let posX = p * (gameGrid.getWidth()-1);
-    let posY = parseInt(gameGrid.getHeight()/2)-2;
-    let posVector = new Vector(posX, posY);
-    paddle.moveTo(posVector, true)
-
-    paddle.start = function(gameGrid){
-        this.ball = gameGrid.getGameObject("dot");
-    }
-
-    if(p==1){
-        paddle.moveKeys.UP = keyCodesEnum.UP;   
-        paddle.moveKeys.DOWN = keyCodesEnum.DOWN;   
-    }
-
-    for(let i=0; i<3; i++){
-        let square = new Square()
-        square.position = new Vector(0,1+i);
-        paddle.pushSquare(square  )
+    if(p==0){
+        paddle.setWasd();
+        paddle.setVertical();
     } 
-
-    paddle.update = function(gameGrid){
-        if(paddle.position.y < 0) paddle.position.y = 0;
-        else if(paddle.position.y > gameGrid.getHeight()-paddle.paddleLength+0.5){
-            paddle.position.y = gameGrid.getHeight()-paddle.paddleLength+0.5;
-        } 
-    }
 }
 
 createGameLoop(gameGrid);

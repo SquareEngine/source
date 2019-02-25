@@ -508,8 +508,20 @@ class GameObject {
 class GameObjectMove extends GameObject{
     constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true, wasd=false){
         super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender);
-        if(wasd) this.moveKeys = {UP:keyCodesEnum.W, DOWN:keyCodesEnum.S, LEFT:keyCodesEnum.A, RIGHT:keyCodesEnum.D};
-        else this.moveKeys = {UP:keyCodesEnum.UP, DOWN:keyCodesEnum.DOWN, LEFT:keyCodesEnum.LEFT, RIGHT:keyCodesEnum.RIGHT};
+        this.wasd=wasd;
+        if(this.wasd) this.setWasd();
+        else this.setArrow();
+    }
+
+    setWasd(){
+        this.wasd=true;
+        this.moveKeys = {UP:keyCodesEnum.W, DOWN:keyCodesEnum.S, 
+            LEFT:keyCodesEnum.A, RIGHT:keyCodesEnum.D};
+    }
+    setArrow(){
+        this.wasd=false;
+        this.moveKeys = {UP:keyCodesEnum.UP, DOWN:keyCodesEnum.DOWN, 
+            LEFT:keyCodesEnum.LEFT, RIGHT:keyCodesEnum.RIGHT};
     }
 
     _inputKeyDown(keyCode){
@@ -558,8 +570,7 @@ class GameObjectPaddle extends GameObjectMove{
 
         if(vertical) this.setVertical();
         else this.setHorizontal();
-        this.setAutoLimit();
-            
+        this.setWrapAroundOff();
     }
 
     setAutoLimit(){
@@ -574,6 +585,7 @@ class GameObjectPaddle extends GameObjectMove{
         this._isVertical = true;
         if(this.wasd) this.moveKeys = {UP:keyCodesEnum.W, DOWN:keyCodesEnum.S, LEFT:null, RIGHT:null};
         else this.moveKeys = {UP:keyCodesEnum.UP, DOWN:keyCodesEnum.DOWN, LEFT:null, RIGHT:null};
+        this.setAutoLimit();
     }
 
     isVertical(){return this._isVertical;}
@@ -582,17 +594,29 @@ class GameObjectPaddle extends GameObjectMove{
         this._isVertical = false;
         if(this.wasd) this.moveKeys = {UP:null, DOWN:null, LEFT:keyCodesEnum.LEFT, RIGHT:keyCodesEnum.RIGHT};
         else this.moveKeys = {UP:null, DOWN:null, LEFT:keyCodesEnum.LEFT, RIGHT:keyCodesEnum.RIGHT};
+        this.setAutoLimit();
     }
 
     isHorizontal(){return !this._isVertical;}
 
     postUpdate(gameGrid){
-        if(this.position.x<this._minLimit){
-            this.position.x=this._minLimit;
+        if(this.isVertical()){
+            if(this.position.y<this._minLimit){
+                this.position.y=this._minLimit;
+            }
+            else if (this.position.y>this._maxLimit){
+                this.position.y=this._maxLimit;
+            }  
         }
-        else if (this.position.x>this._maxLimit){
-            this.position.x=this._maxLimit;
-        }   
+        else{
+            if(this.position.x<this._minLimit){
+                this.position.x=this._minLimit;
+            }
+            else if (this.position.x>this._maxLimit){
+                this.position.x=this._maxLimit;
+            }  
+        }
+         
     }
 }
 
@@ -604,7 +628,7 @@ class GameObjectBall extends GameObject {
         this.topOffset = 0;
         this.botOffset = 0;
         this.autoSetOffsets();
-        this._wrapAround = false;
+        this.setWrapAroundOff()
     }
 
     setRandomDirection(len=1, normalize=false){
