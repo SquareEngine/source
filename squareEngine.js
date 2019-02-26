@@ -1,12 +1,10 @@
 // simple enum to make it easier to interect with keycodes
 var keyCodesEnum = {ENTER:13, RESET:82, SPACE:32, LEFT:37, RIGHT:39, UP:38, DOWN:40, W:87, A:65, S:83, D:68}
-// tile enum. add here to implement new tile types
-var tileEnum = {EMPTY:0};
 
 // a simple enum with our 4 possible game states
 var gameStateEnum = {START:0, UPDATE:1, PAUSED:2, OVER:3};
 
-
+var tileEnum = {EMPTY:0, FULL:1};
 /*
 The game engine class.
 There should be only 1 gameGrid object per game file.
@@ -26,12 +24,12 @@ class GameGrid{
         this._width = width;
         this._height = height;
         this._area = width * height;
-        this._tiles = [this._area];
         this._moveUnits = canvasScale;
-        this._emptyTiles = [this._area];
         this._gameObjects = [];
         this._gameObjectsDict = {};
+
         this._factoryClasses = {"Basic":GameObject, "Move":GameObjectMove, "Ball":GameObjectBall, "Paddle":GameObjectPaddle}
+
         this._backGroundColor = new RGB(150, 150, 150);
 
         this._logger = document.getElementById("logger"); 
@@ -50,6 +48,14 @@ class GameGrid{
         
         // game states        
         this._gameState = gameStateEnum.START;
+
+        // tile attributes
+        this._tiles = [];
+        this._emptyTiles = [];
+        for(let i=0; i<this._area; i++){
+            this._tiles[i] = tileEnum.EMPTY;
+            this._emptyTiles[i] = i;
+        }
     }
 
     _tick(){ // this method gets called about 60 times per second
@@ -256,6 +262,39 @@ class GameGrid{
         this._context.fillText(text, positionX, positionY);
     }
 
+    // tile methods
+    getRandomFreeTileIndex(){
+        let freeIndex = Math.floor( Math.random() * this._emptyTiles.length );
+        return this._emptyTiles[freeIndex];
+    }
+    freeTile(index){
+        this._tiles[ index ] = tileEnum.EMPTY;
+        this._emptyTiles.push(index);
+    }
+
+    ocupyTile(index, tileType){
+        this._tiles[ index ] = tileType;
+        this.removeEmptyTile(index);
+    }
+
+    changeTileType(index, tileType){ this._tiles[ index ] = tileType;}
+
+    removeEmptyTile(index){
+        let spliceIndex = this._emptyTiles.indexOf(index); 
+        this._emptyTiles.splice(spliceIndex, 1);
+    }
+
+    convertVectorToIndex(vector){ 
+        return parseInt(vector.x) + (parseInt(vector.y) * this._height) ;
+    }
+
+    convertIndexToVector(index){
+        let returnVector = new Vector();
+        returnVector.x = (index % this._width) + 0.5;
+        returnVector.y = parseInt( index/this._height) + 0.5;
+        return returnVector;
+    }
+
 }
 
 
@@ -311,30 +350,18 @@ class GameObject {
 
                 let square = this._squareArray[i];
                 square.render();
-                
-                /* let TopLeft = this.screenCheck(square.getTopLeft());
-                if(TopLeft.status==true) square.renderAt(TopLeft);
-
-                let topRight = this.screenCheck(square.getTopRight());
-                if(topRight.status==true) square.renderAt(topRight);
-
-                let botLeft = this.screenCheck(square.getBotLeft());
-                if(botLeft.status==true) square.renderAt(botLeft);
-
-                let botRight = this.screenCheck(square.getBotRight());
-                if(botRight.status==true) square.renderAt(botRight); */
-
-                /* this.drawSquare(
-                    this.horizontalCheck( this.position.x + this._squareArray[i].x), 
-                    this.verticalCheck( this.position.y + this._squareArray[i].y)
-                    ); */
+             
             }
         } 
     }
     // method that gets called right before the game starts
     _start(gameGrid){
-        this.updateBoundingBox(); // first thing is to generate a bounding box
+        if(this._autoBB) this.updateBoundingBox(); // first thing is to generate a bounding box
         this.start(gameGrid);
+        if(this._gridSnap==true){
+            this.position.x = parseInt(this.position.x) + 0.5;
+            this.position.y = parseInt(this.position.y) + 0.5;
+        }
     }
 
     _inputKeyDown(keyCode){this.inputKeyDown(keyCode);}
@@ -349,6 +376,8 @@ class GameObject {
     show(){this._canRender=true;}
     enableUpdate(){this._canUpdate=true;}
     disableUpdate(){this._canUpdate=false;}
+    enableAutoBB(){this._autoBB=true;}
+    disableAutoBB(){this._autoBB=false;}
     setWrapAroundOn(){this._wrapAround=true;}
     setWrapAroundOff(){this._wrapAround=false;}
     setMoveOn(){this._canMove=true;}
@@ -372,6 +401,12 @@ class GameObject {
         square.gameObject = this;
         if(square._color==null) square._color = this._color;
         this._squareArray.push(square);
+        if(this._autoBB==true) this.updateBoundingBox();
+    }
+    insertSquare(square, index=0){
+        square.gameObject = this;
+        if(square._color==null) square._color = this._color;
+        this._squareArray.splice( index, 0, square);
         if(this._autoBB==true) this.updateBoundingBox();
     }
     popSquare(){ // pops a square to your squareArray
@@ -414,16 +449,45 @@ class GameObject {
     setColorObject(rgbObject){this._color=rgbObject;}
 
     setRandomColor(){ this._color.randomColor();}
+    setRandomDirection(len=1, normalize=false){
+        // randomly generates diagonal directions
+        // len will be the length of the X & Y values. That can make the ball move faster
+        // normalize will normalize the direction vector after setting new value
+        let h_dir = Math.floor( Math.random() * 2 ); // horizontal direction
+        let v_dir = Math.floor( Math.random() * 2 ); // vertical direction
+
+        this.direction = new Vector( [len,-len][h_dir], [len, -len][v_dir] );
+        if(normalize==true){
+            this.direction.normalize();
+        }
+    }
+    setRandomPosition(){
+        let randomX = Math.floor(Math.random() * this._gameGrid._width);
+        let randomY = Math.floor(Math.random() * this._gameGrid._height);
+        if(this._gridSnap){
+            randomX = parseInt(randomX);
+            randomY = parseInt(randomY);
+        }
+        this.position = new Vector(randomX, randomY);
+    }
+
 
     getPosition(){return this.position.copy();}
     getPrevPosition(){return this.prevPosition.copy();}
+    getNextPosition(){return this.position.sum(this.direction);}
 
-    getNextPosition(){ 
-        let nextPosition = this.direction.normalized();
-        return nextPosition.mul( this._gameGrid.getDeltaTime() * this._speed );
+    getDirection(){ 
+        if(this._gridSnap==true){
+            return this.direction.copy();
+        }
+        else{
+            let nextPosition = this.direction.normalized();
+            return nextPosition.mul( this._gameGrid.getDeltaTime() * this._speed );
+        }
+        
     }
 
-    move(){ this.moveTo( this.getNextPosition() ); }
+    move(){ this.moveTo( this.getDirection() ); }
 
     moveTo(vector, absolute=false){
         this.prevPosition = this.getPosition();
@@ -502,6 +566,17 @@ class GameObject {
     } 
 
     updateBoundingBox(){ this._bb.updateBoundingBox(); }
+
+    // tile methods
+    getPositionAsIndex(){
+        return this._gameGrid.convertVectorToIndex(this.position.copy());
+    }
+    getNextPositionAsIndex(){
+        return this._gameGrid.convertVectorToIndex(this.getNextPosition());
+    }
+    setIndexPosition(index){
+        this.position = this._gameGrid.convertIndexToVector(index);
+    }
 }
 
 // a simple gameObject subClass that just adds movement keycodes to move up/down/left/right
@@ -631,19 +706,6 @@ class GameObjectBall extends GameObject {
         this.setWrapAroundOff()
     }
 
-    setRandomDirection(len=1, normalize=false){
-        // randomly generates diagonal directions
-        // len will be the length of the X & Y values. That can make the ball move faster
-        // normalize will normalize the direction vector after setting new value
-        let h_dir = Math.floor( Math.random() * 2 ); // horizontal direction
-        let v_dir = Math.floor( Math.random() * 2 ); // vertical direction
-
-        this.direction = new Vector( [len,-len][h_dir], [len, -len][v_dir] );
-        if(normalize==true){
-            this.direction.normalize();
-        }
-    }
-
     autoSetOffsets(){
         this.leftOffset = this._bb.size.x/2;
         this.rightOffset = this._bb.size.x/2;
@@ -766,7 +828,7 @@ class Vector{
     // check if given vector is equal to this vector
     isEqual(vector){
         if(this.x != vector.x) return false;
-        if(this.y != vector.y) return false;ou
+        if(this.y != vector.y) return false;
         return true;
     }
     copy(){
