@@ -19,7 +19,7 @@ It will instanciate a new gameObject and place it inside the _gameObjects array.
 
 */
 class GameGrid{
-    constructor(width=10, height=10, canvasScale=20, gameSpeed=1){
+    constructor(width=10, height=10, canvasScale=20){
 
         this._width = width;
         this._height = height;
@@ -27,6 +27,7 @@ class GameGrid{
         this._moveUnits = canvasScale;
         this._gameObjects = [];
         this._gameObjectsDict = {};
+        this.debug = undefined;
 
         this._factoryClasses = {"Basic":GameObject, "Move":GameObjectMove, "Ball":GameObjectBall, "Paddle":GameObjectPaddle}
 
@@ -88,6 +89,18 @@ class GameGrid{
     Ex: someGameObject.inputKeyDown = function(keyCode){ some code...}
     */
     _inputKeyDown(keyCode){
+        switch(keyCode){
+            case(keyCodesEnum.SPACE):
+                if(this._gameState == gameStateEnum.PAUSED) this._setGameToUpdate();
+                else if(this._gameState == gameStateEnum.UPDATE) this._setGameToPaused();
+                break;
+            case(keyCodesEnum.ENTER):
+                if(this._gameState == gameStateEnum.START) this._setGameToUpdate();
+                break;
+            case(keyCodesEnum.RESET):
+                this._reset();
+                break;
+        }
         this.inputKeyDown(keyCode);
         for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._inputKeyDown(keyCode);
     }
@@ -117,8 +130,19 @@ class GameGrid{
     }
 
     _reset(){
+        this._setGameToStart(); // we first set our game state to start screen
+        this._gameObjects = [];
+        this._gameObjectsDict = {};
+        this.debug = undefined;
         this._stepCounter = 0; // reset the step counter always
-        this.reset();
+        this._tiles = [];
+        this._emptyTiles = [];
+        for(let i=0; i<this._area; i++){
+            this._tiles[i] = tileEnum.EMPTY;
+            this._emptyTiles[i] = i;
+        }
+        this.reset(); // call custom reset
+        this._start(); // generate all game assets
     }
 
     _render(){
@@ -150,6 +174,7 @@ class GameGrid{
         this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
     }
 
+    _getGameState(){return this._gameState;}
     _setGameToStart(){this._gameState = gameStateEnum.START;}
     _setGameToUpdate(){this._gameState = gameStateEnum.UPDATE;}
     _setGameToPaused(){this._gameState = gameStateEnum.PAUSED;}
@@ -158,7 +183,15 @@ class GameGrid{
         this._disableAllUpdates();
     }
 
-    _start(){ for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._start(this); }
+    _start(){ 
+        this.start();
+        for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._start(this); 
+        // create our debug square
+        this.debug = this.createGameObject("debug", "Basic", 0,0, true, false);
+        this.debug.setColor(0,200,200);
+        this.debug.hide();
+        this.postStart();
+    }
 
     _disableAllUpdates(){ for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._canUpdate=false; }
 
@@ -166,9 +199,11 @@ class GameGrid{
     //################################# methods to override ####################################
     //##########################################################################################
 
-    preUpdate(){return true} // preUpdate stage if needed
-    postUpdate(){return true} // post update if needed
-    update(){return true} // update game grid logic
+    start(){return true;}
+    postStart(){return true;}
+    preUpdate(){return true;} // preUpdate stage if needed
+    postUpdate(){return true;} // post update if needed
+    update(){return true;} // update game grid logic
     render(){return true;} 
     renderStartUI(){
         this.renderText("PRESS ENTER TO START");
@@ -183,17 +218,7 @@ class GameGrid{
     reset(){return true;} 
     gameOver(){return true;} 
 
-    inputKeyDown(keyCode){
-        switch(keyCode){
-            case(keyCodesEnum.SPACE):
-                if(this._gameState == gameStateEnum.PAUSED) this._setGameToUpdate();
-                else this._setGameToPaused();
-                break;
-            case(keyCodesEnum.ENTER):
-                if(this._gameState == gameStateEnum.START) this._setGameToUpdate();
-                break;
-        }
-    }
+    inputKeyDown(keyCode){return true;}
     inputKeyUp(keyCode){return true;}
 
     // use this method to get the delta time. Use the deltaTime to get smooth motion.
@@ -245,7 +270,7 @@ class GameGrid{
     getUpdateStep(){return this._updateStep;}
 
     // renders a square at x & y positions with given size and color
-    renderSquare(position, size=new Vector(1,1), color=RGB.makeRandomColor(), scaleOffset=true){
+    renderSquare(position=new Vector(0,0), size=new Vector(1,1), color=RGB.makeRandomColor(), scaleOffset=true){
         if(scaleOffset==true) position = position.sub( size.mul(0.5) );
         position = position.mul( this._moveUnits );
         size = size.mul( this._moveUnits );
@@ -277,7 +302,8 @@ class GameGrid{
         this.removeEmptyTile(index);
     }
 
-    changeTileType(index, tileType){ this._tiles[ index ] = tileType;}
+    setTileType(index, tileType){ this._tiles[ index ] = tileType;}
+    getTileType(index){return this._tiles[index];}
 
     removeEmptyTile(index){
         let spliceIndex = this._emptyTiles.indexOf(index); 
@@ -285,13 +311,13 @@ class GameGrid{
     }
 
     convertVectorToIndex(vector){ 
-        return parseInt(vector.x) + (parseInt(vector.y) * this._height) ;
+        return parseInt(vector.x) + (parseInt(vector.y) * this._width) ;
     }
 
     convertIndexToVector(index){
         let returnVector = new Vector();
         returnVector.x = (index % this._width) + 0.5;
-        returnVector.y = parseInt( index/this._height) + 0.5;
+        returnVector.y = parseInt( index/this._width) + 0.5;
         return returnVector;
     }
 
@@ -326,6 +352,10 @@ class GameObject {
         this._bb = new BoundingBox(new Vector(0,0), new Vector(1,1), this);
         this._autoBB = true;
 
+        this._secondSquare = false;
+        this._secondColor = null;
+        this._secondSize = null;
+
         this.pushSquare( new Square() );
     }
 
@@ -350,7 +380,10 @@ class GameObject {
 
                 let square = this._squareArray[i];
                 square.render();
-             
+                if(this._secondSquare){
+                    let pos = square.getTopLeft().sum(this._secondSize.mul(0.5));
+                    square._drawSquare(pos, this._secondSize, this._secondColor);
+                }
             }
         } 
     }
@@ -425,6 +458,18 @@ class GameObject {
         return returnData;
     }
     getSquare(index=0){return this._squareArray[index];}
+
+    // second square methods
+    setSecondSquareOn(color=RGB.makeRandomColor(), size=new Vector(.5,.5)){
+        this._secondSquare = true;
+        this._secondColor = color;
+        this._secondSize = size;
+    }
+    setSecondSquareOff(){
+        this._secondSquare = false;
+        this._secondColor = null;
+        this._secondSize = null;
+    }
 
     // when overriding these methods dont forget to pass a gameGrid input
     preUpdate(gameGrid){return true}; 
@@ -559,7 +604,8 @@ class GameObject {
             for(let j=0; j<gameObject._squareArray.length; j++){
                 // given gameObject current square + its position
                 let givenSquare = gameObject._squareArray[j];
-                if(mySquare.overlap(givenSquare)==true) return true;
+                let collision = mySquare.overlap(givenSquare);
+                if(collision!=false) return collision;
             }
         }
         return false;
@@ -747,6 +793,70 @@ class GameObjectBall extends GameObject {
     touchedRight(){return true;}
 }
 
+class KeyboardInterface{
+    constructor(gameObject){
+        this.gameObject = gameObject
+    }
+    remove(){}
+    keyDown(keyCode){}
+    keyUp(keyCode){}
+
+}
+class Directional extends KeyboardInterface{
+    constructor(gameObject, wasd=true){
+        super(gameObject)
+        this.wasd=wasd;
+        if(this.wasd) this.setWasd();
+        else this.setArrow();
+    }
+
+    setWasd(){
+        this.wasd=true;
+        this.moveKeys = {UP:keyCodesEnum.W, DOWN:keyCodesEnum.S, 
+            LEFT:keyCodesEnum.A, RIGHT:keyCodesEnum.D};
+    }
+    setArrow(){
+        this.wasd=false;
+        this.moveKeys = {UP:keyCodesEnum.UP, DOWN:keyCodesEnum.DOWN, 
+            LEFT:keyCodesEnum.LEFT, RIGHT:keyCodesEnum.RIGHT};
+    }
+
+    keyDown(keyCode){
+        switch(keyCode){
+            case(keyCodesEnum.UP):
+                this.gameObject.direction.y=-1;
+                break;
+            case(keyCodesEnum.DOWN):
+                this.gameObject.direction.y=1;
+                break;
+            case(keyCodesEnum.LEFT):
+                this.gameObject.direction.x=-1;
+                break;
+            case(keyCodesEnum.RIGHT):
+                this.gameObject.direction.x=1;
+                break;
+        }
+    }
+
+    keyUp(keyCode){
+        switch(keyCode){
+            case(keyCodesEnum.UP):
+                this.gameObject.direction.y=0;
+                break;
+            case(keyCodesEnum.DOWN):
+                this.gameObject.direction.y=0;
+                break;
+            case(keyCodesEnum.LEFT):
+                this.gameObject.direction.x=0;
+                break;
+            case(keyCodesEnum.RIGHT):
+                this.gameObject.direction.x=0;
+                break;
+        }
+    }
+
+}
+
 class Vector{
     // simple vector class to represent x & y coordinates
     constructor(x=0,y=0){
@@ -833,6 +943,11 @@ class Vector{
     }
     copy(){
         return new Vector(this.x, this.y);
+    }
+
+    truncate(){
+        this.x = parseInt(this.x);
+        this.y = parseInt(this.y);
     }
 }
 
@@ -1060,6 +1175,10 @@ function createGameLoop(gameGrid){
     // creates keyboard events and calls our gameGrid input methods
     document.addEventListener('keydown', function(event) {
         gameGrid._inputKeyDown(event.keyCode);
+        if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
+            event.preventDefault();
+        }
+        //event.preventDefault();
 
     });
     document.addEventListener('keyup', function(event) {
