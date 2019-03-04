@@ -40,6 +40,11 @@ class GameGrid{
         this._canvas.height = height * canvasScale;
         this._context = this._canvas.getContext('2d');
 
+        // UI text
+        this._startText = ["PRESS ENTER TO START"];
+        this._pauseText = ["PAUSE"];
+        this._gameOverText = ["GAME OVER"];
+
         // time variables
         this._now;
         this._lastUpdate;
@@ -107,6 +112,11 @@ class GameGrid{
     _inputKeyUp(keyCode){
         this.inputKeyUp(keyCode);
         for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._inputKeyUp(keyCode);
+    }
+
+    _mouseClick(mousePos){
+        this.mouseClick(mousePos);
+        for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i].mouseClick(mousePos);
     }
 
     _update(){
@@ -206,11 +216,26 @@ class GameGrid{
     update(){return true;} // update game grid logic
     render(){return true;} 
     renderStartUI(){
-        this.renderText("PRESS ENTER TO START");
+        let moveUnits = this.getPixelHeight() / (this._startText.length+1);
+        for(let i=0; i<this._startText.length; i++){
+            this.renderText( this._startText[i], 
+                null,
+                moveUnits*(i+1), 
+                40, 
+                new RGB(0,0,0));
+        }
+        //this.renderText("PRESS ENTER TO START");
     }
     renderGameUI(){return true;}
     renderGameOverUI(){
-        this.renderText("GAME OVER");
+        let moveUnits = this.getPixelHeight() / (this._gameOverText.length+1);
+        for(let i=0; i<this._gameOverText.length; i++){
+            this.renderText( this._gameOverText[i], 
+                null,
+                moveUnits*(i+1), 
+                40, 
+                new RGB(0,0,0));
+        }
     }
     renderPauseUI(){
         this.renderText("PAUSE");
@@ -220,6 +245,7 @@ class GameGrid{
 
     inputKeyDown(keyCode){return true;}
     inputKeyUp(keyCode){return true;}
+    mouseClick(mousePos){return true;}
 
     // use this method to get the delta time. Use the deltaTime to get smooth motion.
     // Ex: if you're moving an object by lets say X units on every update have it multiplied by deltaTime.
@@ -381,10 +407,11 @@ class GameObject {
                 let square = this._squareArray[i];
                 square.render();
                 if(this._secondSquare){
-                    let pos = square.getTopLeft().sum(this._secondSize.mul(0.5));
-                    square._drawSquare(pos, this._secondSize, this._secondColor);
+                    let squarePosition = square.getTopLeft().sum(this._secondSize.mul(0.5));
+                    square.drawSquare(squarePosition, this._secondSize, this._secondColor);
                 }
             }
+            this.postRender(gameGrid); 
         } 
     }
     // method that gets called right before the game starts
@@ -476,14 +503,12 @@ class GameObject {
     update(gameGrid){return true;}
     postUpdate(gameGrid){return true;} 
     render(gameGrid){return true;}
+    postRender(gameGrid){return true;}
     start(gameGrid){return true;}
    
     inputKeyDown(keyCode){return true;}
     inputKeyUp(keyCode){return true;}
-
-    /* drawSquare(x, y, size=1, color=this._color){
-        this._gameGrid.renderSquare(x, y, size, color);
-    } */
+    mouseClick(mousePos){return true;}
 
     setColor(r=150, g=150, b=150){
         this._color.setColor(r,g,b);
@@ -935,6 +960,9 @@ class Vector{
         returnVector.normalize();
         return returnVector
     }
+    dot(vector){
+        return (this.x * vector.x) + (this.y * vector.y);
+    }
     // check if given vector is equal to this vector
     isEqual(vector){
         if(this.x != vector.x) return false;
@@ -1069,10 +1097,7 @@ class Square extends BoundingBox{
 
     setColor(r,g,b){this._color.setColor(r,g,b);}
     
-    setRandomColor(){
-        if(this._color==null) this._color = RGB.makeRandomColor();
-        else this._color.setColor(r,g,b);
-    }
+    setRandomColor(){this._color = RGB.makeRandomColor();}
 
     render(){
         let position = this.getTopLeft();
@@ -1080,10 +1105,10 @@ class Square extends BoundingBox{
     }
 
     renderAt(position){
-        this._drawSquare(position, this.size, this._color)
+        this.drawSquare(position, this.size, this._color)
     }
 
-    _drawSquare(position, size=new Vector(1,1), color=RGB.makeRandomColor() ){
+    drawSquare(position, size=new Vector(1,1), color=RGB.makeRandomColor() ){
         position = position.mul( this.gameObject._gameGrid._moveUnits );
         size = size.mul( this.gameObject._gameGrid._moveUnits );
         this.gameObject._gameGrid._context.fillStyle = color.colorString();
@@ -1184,4 +1209,16 @@ function createGameLoop(gameGrid){
     document.addEventListener('keyup', function(event) {
         gameGrid._inputKeyUp(event.keyCode);
     });
+
+    document.addEventListener("click", function (event) {
+        let rect = gameGrid._canvas.getBoundingClientRect();
+        var mousePos = new Vector(event.clientX - rect.left, event.clientY - rect.top)
+        if(mousePos.x >=0 && mousePos.x <= gameGrid.getPixelWidth() &&
+        mousePos.y >= 0 && mousePos.y <= gameGrid.getPixelHeight()){
+            gameGrid._mouseClick(mousePos);
+            //alert(mousePos.x + ',' + mousePos.y);
+        }
+        
+    }, false);
+    
 }
