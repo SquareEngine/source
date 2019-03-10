@@ -1,0 +1,227 @@
+
+@import url('https://fonts.googleapis.com/css?family=Merriweather');
+@import url('https://fonts.googleapis.com/css?family=Domine');
+@import url('https://fonts.googleapis.com/css?family=Poly');
+@import url('https://fonts.googleapis.com/css?family=Great+Vibes');
+
+
+body {
+	background-color:rgb(240,240,240);
+	margin: 0;
+	padding: 0;
+	border:0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+	font-family: 'Ubuntu', sans-serif;
+}
+
+#wrapper {
+		margin:0 auto;
+		width:100%;
+		min-width:960px;
+}
+#wrapper header {
+		width:1200px;
+		margin: 0 auto;
+		margin-top:5px;
+		}
+
+
+header {
+	background-color:rgb(255,51,51);
+}
+
+header nav ul li {
+	text-align:center;
+	margin:5px;
+	height:200px;
+}
+
+nav{
+	text-align:center;
+	position: -webkit-sticky; 
+    position:absolute;
+    top: 15px; 
+	left:30%;
+	width:50%; 
+}
+
+
+nav ul li {
+	display:inline;
+	padding:.1em;
+	font-family: 'Merriweather', serif;
+	font-size:1em;
+}
+
+nav ul li a:link, nav ul li a:visited  {
+	color:black;
+	text-decoration:none;
+	display:inline-block;
+	background-color:rgb(255,51,51);
+	width:100px;
+	height:3px;
+}
+
+
+nav ul li a:hover{	
+	color:rgb(255,255,0);/*yellow for the visted color*/
+}
+
+
+
+#hero {
+	width:100%;
+	height:1000px;
+	background-image: url("../images/cube.jpg");
+	background-size:cover;
+	text-align:center;
+    display: flex;
+	justify-content: center;
+	align-items: center;	
+
+}
+
+#hero blockquote {
+	font-family: 'Great Vibes', cursive;
+	font-size:5em;
+	color:rgb(248,248,255);
+	width:270px;
+	border-radius:60px;
+	text-align:center;
+	padding:80px;
+	border-style:double;
+	margin:0 auto;
+	
+}
+
+footer{
+	font-family: 'Merriweather', serif;
+	font-size:1em;
+	background-color:rgb(240,240,240);
+	color:black;
+	width:100%;
+	min-width:960px;
+	text-align:center;
+	padding:.5px;
+	margin-top:10px;
+}
+
+
+.clearFlt {	
+text-align:left;
+margin:10px;
+		}
+
+.copy{
+	text-align:right;
+	margin:10px;
+	}	
+	
+	
+	
+/*contact page styles*/
+
+h2{
+	font-family: 'Poly', serif;
+	font-size:2em;
+}
+
+h4{
+	font-family: 'Poly', serif;
+	font-size:1.2em;
+}
+
+
+main section {
+	background-color: rgb(245,245,245);
+	display:inline-block; 
+	vertical-align:top;
+	padding:3em;
+	height:800px;	
+}
+
+main section.formSection {
+	width:45%;
+	display:inline-block;
+}
+
+main section.formSection h1 { 
+	font-size:30px;
+}
+
+main section#map {
+	background-color:rgb(245,245,245);
+	vertical-align:center;
+	height:655px;
+	width:42%;
+	position:absolute;
+}
+
+#map{
+	text-align:center;
+	height:100px;
+	top:100px;
+}
+
+fieldset.personal{
+	font-family: 'Poly', serif;
+	font-size:1em;
+	text-align:center;
+	font-weight: bold;
+}
+
+fieldset.personal legend{
+	font-family: 'Poly', serif;
+	font-size:1.5em;
+	text-align:left;
+	font-weight:bold;
+}
+
+fieldset legend{
+	font-family: 'Poly', serif;
+	font-size:1.5em;
+   	text-align:left;
+	font-weight:bold;
+}
+
+fieldset.personal label{
+	font-family: 'Poly', serif;
+	font-size:1em;
+	background-color:rgb(245,245,245);
+	width:300px;
+	display:inline-block;
+	text-align:center;
+}
+
+fieldset.personal input{
+	font-family: 'Poly', serif;
+	font-size:1em;
+	background-color:white;
+	width:300px;
+	height:20px;
+	display:inline-block;
+	text-align:center;
+}
+
+fieldset label{
+font-family: 'Poly', serif;
+}
+
+
+/*About page*/
+main {
+	background-color:rgba(245,245,245,1);
+}
+
+#parag {
+	font-family: 'Poly', serif;
+	font-size:1em;
+	height:340px;
+	width:900px;
+	text-align:left;
+	padding:3.5em;
+	margin:0 auto;
+	
+}
