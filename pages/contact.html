@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset = "UTF-8">
+<title>Square Engine</title>
+<link rel= "stylesheet" type="text/css" href="../css/main.css">
+</head>
+	<body>
+	<div id="wrapper">	
+	<header> 
+		<a href="index.html">
+		<img src="../images/logo.png" alt="Logo" width="60">	
+		</a>
+	<nav>
+		<ul>
+			<li><a href="../index.html"> Home </a></li>
+			<li><a href="../pages/games.html"> Games </a></li>
+			<li><a href="../pages/API.html"> API </a></li>
+			<li><a href="../pages/about.html"> About Us </a></li>
+			<li><a href="../pages/contact.html" class="current"> Contact </a></li>
+		</ul>
+	</nav>
+	</header>
+	
+	
+	
+	<main>
+		<section class="formSection">
+		<h2>Contact Us</h2>
+		<br>
+			<form action="../scripts/contact.php" method="post" id="contactForm"> 
+				<fieldset class="personal">
+				<legend>Personal Info</legend> 
+			
+				<label for="Name">Full Name:</label><br>
+				<input type="text" name="firstName" id="Name" placeholder="Required"> 
+				
+				<br><br>
+				<label for="email">Email:</label><br>
+				<input type="email" name="email" id="email" placeholder="email@example.com"> 
+				<br><br>
+				<label for="phone">Phone Number:</label><br>
+				<input type="tel" name="phone" id="phone" placeholder="555-555-5555" maxlength="10"> 				
+				</fieldset>
+								
+					
+					<br><br>
+					<label for="comments"><h3>Comments</h3></label>				
+					<textarea name="comments" id="comments" cols="50" rows="10"></textarea>
+				<br>
+				<input type="submit" name="submit" id="submit" value="Send">
+				<input type="reset" value="Clear">
+				</fieldset>
+			</form>
+		</section>
+		<section id="map">
+			<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2684.9560404209064!2d-122.1692156843661!3d47.70469097919122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x54900d79edd95479%3A0x867448f4fd1e313c!2sLake+Washington+Institute+of+Technology!5e0!3m2!1spt-PT!2sus!4v1550625851832" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+		</section>
+		</main>
+	
+	<footer>		
+		Beni Ungur<br/>
+			Dimitri Frazao<br/>
+			Tamires Boniolo		
+		
+	    </section>
+	
+		<section class="clearFlt">		
+					<a href="https://www.facebook.com">
+					<img src="../images/face.png" alt="Facebook" width="30"></a>
+					
+					<a href="https://www.instagram.com/?hl=en">
+					<img src="../images/insta.png" alt="Instagram" width="30"></a>
+					
+					<a href="https://twitter.com">
+					<img src="../images/twitter.png" alt="Twitter" width="30"></a>
+					
+					<p class="copy"> &copy </p>
+		</section>
+		
+	</footer>
+	</div>
+	</body>
+</html>
