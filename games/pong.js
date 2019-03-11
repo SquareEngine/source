@@ -41,7 +41,7 @@ let midV = parseInt(gameGrid.getHeight()/2)
 // make dot first so it updates before paddles
 let dot = gameGrid.createGameObject("dot", "Ball", x=midH, y=midV);
 
-dot.setRandomDirection(normalize=true);
+dot.setRandomDirectionX(normalize=true);
 dot.setSpeed(15);
 dot.setColor(250,0,0);
 
