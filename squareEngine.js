@@ -519,7 +519,19 @@ class GameObject {
     setColorObject(rgbObject){this._color=rgbObject;}
 
     setRandomColor(){ this._color.randomColor();}
-    setRandomDirection(len=1, normalize=false){
+    setRandomDirection(len=1, normalize=true){
+        // randomly generates diagonal directions
+        // len will be the length of the X & Y values. That can make the ball move faster
+        // normalize will normalize the direction vector after setting new value
+        let xValue = Math.floor( Math.random() * 3 ) -1; // horizontal direction
+        let yValue = Math.floor( Math.random() * 3 ) -1; // vertical direction
+
+        this.direction = new Vector( xValue, yValue).mul(len);
+        if(normalize==true){
+            this.direction.normalize();
+        }
+    }
+    setRandomDirectionX(len=1, normalize=false){
         // randomly generates diagonal directions
         // len will be the length of the X & Y values. That can make the ball move faster
         // normalize will normalize the direction vector after setting new value

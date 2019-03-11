@@ -1,26 +1,34 @@
-<!-- 
-Dimitri Frazao - assigment 4 - CSD 122 Javascript & JQuery
-Winter 2019
-s-Dimitri.Frazao@lwtech.edu
--->
-
 <!DOCTYPE html>
 <html>
+
 <head>
-    <!-- <meta charset="UTF-8"> -->
-    <title>Square Engine Test</title>
-    <link rel="stylesheet" type="text/css" href="../style.css">
-    <script src="../squareEngine.js"></script> 
-    
+
+<meta charset = "UTF-8">
+<title>Square Engine</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="../scripts/pageBuild.js"></script>
+<script src="../squareEngine.js"></script>
+<link rel= "stylesheet" type="text/css" href="../css/main.css">
 
 </head>
+
 <body>
-<main class="main_body">
-    <p> Square Engine Test <br> </p>
-    <hr>
-    <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
-    <p id="logger"></p>
-</main>
-<script src="../games/pong.js"></script> 
+
+	<div id="tutorialDiv">
+        <p> Tutorial <br> </p>
+
+        <hr>
+        <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+        <hr>
+        <p id="logger"></p>
+	</div>
+
+	<script> 
+        $(document).ready(function() {
+            $("#tutorialDiv").appendTo("#hero"); 
+        });
+        </script>
+    <script src="../games/pong.js"></script>
+
 </body>
 </html>

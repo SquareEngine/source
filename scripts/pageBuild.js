@@ -34,8 +34,8 @@ $(document).ready(function() {
     building main
     */
 
-    let hero = $('<div id="hero"></div>')
-        .append('<blockquote>Square Engine</blockquote>');
+    let hero = $('<div id="hero"></div>');
+        
     
     /*
     building footer
@@ -66,10 +66,10 @@ $(document).ready(function() {
 
 
     $("body")
-        .append( $('<div id="wrapper"></div>')
+        .append( $('<main id="wrapper"></div>')
         .append(header)
         .append(hero)
         .append(footer) );
 
-    
+    console.log("Page Build Done");
 });

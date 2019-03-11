@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- <meta charset="UTF-8"> -->
-        <title>Flappy Bird</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <script src="squareEngine.js"></script>
-    </head>
-    <body>
+
+<head>
+
+<meta charset = "UTF-8">
+<title>Snake Game</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="../scripts/pageBuild.js"></script>
+<script src="../squareEngine.js"></script>
+<link rel= "stylesheet" type="text/css" href="../css/main.css">
+
+</head>
+
+<body>
+    <div id="FlappyDiv">
         <h3>Flappy Bird</h3>
 
         <canvas id="squareEngineCanvas"></canvas>
@@ -14,6 +21,15 @@
             <p id="logger"></p>
             <p id="info"></p>
         </div>
-        <script src="games/flappyBird.js"></script>
-    </body>
+
+    </div>
+    
+    <script> 
+            $(document).ready(function() {
+                $("#FlappyDiv").appendTo("#hero"); 
+            });
+    </script>
+
+    <script src="../games/flappyBird.js"></script>
+</body>
 </html>
