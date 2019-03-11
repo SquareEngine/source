@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset = "UTF-8">
+<title>Snake Game</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="../scripts/pageBuild.js"></script>
+<script src="../squareEngine.js"></script>
+<link rel= "stylesheet" type="text/css" href="../css/main.css">
+
+</head>
+
+<body>
+    <div id="breakDiv">
+        <h3>Flappy Bird</h3>
+
+        <canvas id="squareEngineCanvas"></canvas>
+        <div>
+            <p id="logger"></p>
+            <p id="info"></p>
+        </div>
+
+    </div>
+    
+    <script> 
+            $(document).ready(function() {
+                $("#breakDiv").appendTo("#hero"); 
+            });
+    </script>
+
+    <script src="../games/breakOut.js"></script>
+</body>
+</html>
