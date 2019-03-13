@@ -10,7 +10,8 @@ function updateHeader(isIndex=false) {
         pages = ["index.html", "pages/games.html", "pages/API.html", "pages/tutorial.html", "pages/about.html", "pages/contact.html"];
     }
 
-    $("img#logoLink").attr('src', logoPath);
+    
+    $("a#logoLink").append('<img src="' + logoPath +  '"  alt="Logo" width="60">');
 
     $('ul#pages li').each( function(index)
     {
