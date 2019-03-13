@@ -1,5 +1,6 @@
 function updateHeader(isIndex=false) {
 
+    let linkNames = ["Home", "Games", "API", "Tutorial", "About", "Contact"]
 
     let logoPath = "../images/logo.png";
     let pages = ["../index.html", "games.html", "API.html", "tutorial.html", "about.html", "contact.html"];
@@ -11,9 +12,12 @@ function updateHeader(isIndex=false) {
 
     $("img#logoLink").attr('src', logoPath);
 
-    $('ul#pages a').each( function(index)
+    $('ul#pages li').each( function(index)
     {
-        $(this).attr('href', pages[index]);
+        
+        let linkElement = $('<a href="' + pages[index] + '" class="current"> '+ linkNames[index] + ' </a>')
+        this.append(linkElement)
+        //this.attr('href', pages[index]);
     });
     
     console.log("header link set2");
@@ -29,8 +33,8 @@ function updateFooter(isIndex=false){
 
     $('section.clearFlt a').each( function(index)
     {
-        let imageelement = ('<img src="' + imagePaths[index] + '" alt="' + linkNames[index] + '" width="30"></a>')
-        $(this).append(imageelement)
+        let imageElement = $('<img src="' + imagePaths[index] + '" alt="' + linkNames[index] + '" width="30"></a>')
+        this.append(imageElement)
         //attr('src', imagePaths[index]);
     });
     
