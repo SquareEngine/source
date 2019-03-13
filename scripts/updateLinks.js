@@ -8,6 +8,7 @@ function updateHeader(isIndex=false) {
     if(isIndex){
         logoPath = "images/logo.png";
         pages = ["index.html", "pages/games.html", "pages/API.html", "pages/tutorial.html", "pages/about.html", "pages/contact.html"];
+        console.log("is index");
     }
 
     
@@ -21,7 +22,7 @@ function updateHeader(isIndex=false) {
         //this.attr('href', pages[index]);
     });
     
-    console.log("header link set2");
+    console.log("header link set3");
 }
 
 function updateFooter(isIndex=false){
@@ -30,6 +31,7 @@ function updateFooter(isIndex=false){
     let imagePaths = ["../images/face.png", "../images/insta.png", "../images/twitter.png"]
     if(isIndex){
         imagePaths = ["images/face.png", "images/insta.png", "images/twitter.png"]
+        console.log("is index");
     }
 
     $('section.clearFlt a').each( function(index)
@@ -40,5 +42,5 @@ function updateFooter(isIndex=false){
     });
     
 
-    console.log("footer link set2");
+    console.log("footer link set3");
 };

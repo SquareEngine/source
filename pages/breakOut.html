@@ -12,8 +12,12 @@
 
 <script> 
 	$( document ).ready(function(){
-		$("div#header").load("../header.html", updateHeader()); 
-		$("div#footer").load("../footer.html", updateFooter()); 
+		$("div#header").load("header.html", function(){
+			updateHeader();
+		}); 
+		$("div#footer").load("footer.html", function(){
+			updateFooter();
+		}); 
 	});
 </script> 
 
