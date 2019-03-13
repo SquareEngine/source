@@ -1,16 +1,22 @@
-function updateHeader() {
+function updateHeader(isIndex=false) {
 
 
-    $("img#logoLink").attr('src', "../images/logo.png")
-
+    let logoPath = "../images/logo.png";
     let pages = ["../index.html", "games.html", "API.html", "tutorial.html", "about.html", "contact.html"];
+
+    if(isIndex){
+        logoPath = "images/logo.png";
+        pages = ["index.html", "../games.html", "../API.html", "../tutorial.html", "../about.html", "../contact.html"];
+    }
+
+    $("img#logoLink").attr('src', logoPath);
 
     $('ul#pages a').each( function(index)
     {
         $(this).attr('href', pages[index]);
     });
     
-    console.log("header link set");
+    console.log("header link set2");
 }
 
 function updateFooter(isIndex=false){
@@ -29,5 +35,5 @@ function updateFooter(isIndex=false){
     });
     
 
-    console.log("footer link set");
+    console.log("footer link set2");
 };
