@@ -1,7 +1,5 @@
 // title screen
 
-var theGameGrid = null;
-
 function loadGame()
 {
     const CANVAS_SCALE = 20;
@@ -203,6 +201,6 @@ function loadGame()
         gameGrid._render();
     }
 
-    theGameGrid = gameGrid;
-    createGameLoop(theGameGrid);
+    window.gameGrid = gameGrid;
+    createGameLoop(window.gameGrid);
 }
