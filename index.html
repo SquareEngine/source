@@ -8,15 +8,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <!-- <script src="scripts/pageBuild.js"></script> -->
 <script src="squareEngine.js"></script>
-<script src="games/titleScreen.js"></script>
+
 <link rel= "stylesheet" type="text/css" href="css/main.css">
 
 <script> 
 	$( document ).ready(function(){
-		$("#wrapper").load("body.html", function(){
-			window.gameGrid = loadGame();
-			}
-		); 
+		$("div#header").load("header.html"); 
+		$("div#footer").load("footer.html"); 
 		
 	});
 </script> 
@@ -25,12 +23,23 @@
 </head>
 
 <body>
+	<div id="header"></div>
 
 	<div id="wrapper">	
+		<div id="hero">
+				<!-- <blockquote>Square Engine</blockquote> -->
+		</div>
+		
+		<div id="titleScreen">
+			<canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+			<p id="logger"></p>
+		</div>
 	</div>
+
+	<div id="footer"></div>
 
 </body>
 
-
+<script src="games/titleScreen.js"></script>
 
 </html>
