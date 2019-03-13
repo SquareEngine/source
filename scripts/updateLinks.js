@@ -13,14 +13,19 @@ function updateHeader() {
     console.log("header link set");
 }
 
-function updateFooter(){
+function updateFooter(isIndex=false){
 
     imagePaths = ["../images/face.png", "../images/insta.png", "../images/twitter.png"]
+    if(isIndex){
+        imagePaths = ["images/face.png", "images/insta.png", "images/twitter.png"]
+    }
 
 
-    $('section.clearFlt img').each( function(index)
+    $('section.clearFlt a').each( function(index)
     {
-        $(this).attr('src', imagePaths[index]);
+        let imageelement = ('<img src="' + imagePaths[index] + '" alt="Facebook" width="30"></a>')
+        $(this).append(imageelement)
+        //attr('src', imagePaths[index]);
     });
     
 
