@@ -1,41 +1,3 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-
-<meta charset = "UTF-8">
-<title>Snake Game</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="../scripts/pageBuild.js"></script>
-<script src="../squareEngine.js"></script>
-<link rel= "stylesheet" type="text/css" href="../css/main.css">
-
-</head>
-
-<body>
-
-<div id="snakeDiv">
-    <p> Snake Game - Dimitri Frazao 2019<br> </p>
-
-    <hr>
-    <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
-    
-
-    <p id="logger"></p>
-</div>
-
-
-<script> 
-$(document).ready(function() {
-    $("#snakeDiv").appendTo("#hero"); 
-});
-</script>
-<script src="../games/snake.js"></script>
-
-</body>
-</html>
-
-
 
 <!DOCTYPE html>
 <html>
@@ -46,13 +8,14 @@ $(document).ready(function() {
 <title>Square Engine - Snake</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="../squareEngine.js"></script>
-
+<script src="../scripts/updateLinks.js"></script>
 <link rel= "stylesheet" type="text/css" href="../css/main.css">
 
 <script> 
 	$( document ).ready(function(){
 		$("div#header").load("../header.html"); 
-		$("div#footer").load("../footer.html"); 
+        $("div#footer").load("../footer.html"); 
+        updatePageLinks();
 	});
 </script> 
 <script src="../scripts/pageBuild.js"></script>
