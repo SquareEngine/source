@@ -15,8 +15,8 @@ function updateHeader(isIndex=false) {
     $('ul#pages li').each( function(index)
     {
         
-        let linkElement = $('<a href="' + pages[index] + '" class="current"> '+ linkNames[index] + ' </a>')
-        $(this).append(linkElement)
+        //let linkElement = $('<a href="' + pages[index] + '" class="current"> '+ linkNames[index] + ' </a>')
+        $(this).append('<a href="' + pages[index] + '" class="current"> '+ linkNames[index] + ' </a>')
         //this.attr('href', pages[index]);
     });
     
@@ -33,8 +33,8 @@ function updateFooter(isIndex=false){
 
     $('section.clearFlt a').each( function(index)
     {
-        let imageElement = $('<img src="' + imagePaths[index] + '" alt="' + linkNames[index] + '" width="30"></a>')
-        $(this).append(imageElement)
+        //let imageElement = $('<img src="' + imagePaths[index] + '" alt="' + linkNames[index] + '" width="30"></a>')
+        $(this).append('<img src="' + imagePaths[index] + '" alt="' + linkNames[index] + '" width="30"></a>')
         //attr('src', imagePaths[index]);
     });
     
