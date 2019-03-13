@@ -516,9 +516,13 @@ class GameObject {
             this._squareArray[i]._color = this._color;
         }
     }
-    setColorObject(rgbObject){this._color=rgbObject;}
+    setColorObject(rgbObject){this._color.setColor(rgbObject.r, rgbObject.g, rgbObject.b);}
 
-    setRandomColor(){ this._color.randomColor();}
+    setRandomColor(){
+        let newColor = RGB.makeRandomColor();
+        this._color.setColor(newColor.r, newColor.g, newColor.b);
+    }
+    
     setRandomDirection(len=1, normalize=true){
         // randomly generates diagonal directions
         // len will be the length of the X & Y values. That can make the ball move faster
@@ -526,7 +530,8 @@ class GameObject {
         let xValue = Math.floor( Math.random() * 3 ) -1; // horizontal direction
         let yValue = Math.floor( Math.random() * 3 ) -1; // vertical direction
 
-        this.direction = new Vector( xValue, yValue).mul(len);
+        this.direction = new Vector( xValue, yValue);
+        this.direction = this.direction.mul(len);
         if(normalize==true){
             this.direction.normalize();
         }
@@ -564,7 +569,7 @@ class GameObject {
         }
         else{
             let nextPosition = this.direction.normalized();
-            return nextPosition.mul( this._gameGrid.getDeltaTime() * this._speed );
+            return nextPosition.mul( this._gameGrid.getDeltaTime() * this._speed);
         }
         
     }
@@ -1109,7 +1114,10 @@ class Square extends BoundingBox{
 
     setColor(r,g,b){this._color.setColor(r,g,b);}
     
-    setRandomColor(){this._color = RGB.makeRandomColor();}
+    setRandomColor(){
+        let newColor = RGB.makeRandomColor();
+        this._color.setColor(newColor.r, newColor.g, newColor.b);
+    }
 
     render(){
         let position = this.getTopLeft();

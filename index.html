@@ -6,27 +6,24 @@
 <meta charset = "UTF-8">
 <title>Square Engine</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="scripts/pageBuild.js"></script>
+<!-- <script src="scripts/pageBuild.js"></script> -->
 <script src="squareEngine.js"></script>
 <link rel= "stylesheet" type="text/css" href="css/main.css">
+
+<script> 
+	$(function(){
+		$("#wrapper").load("body.html"); 
+	});
+</script> 
+
 
 </head>
 
 <body>
-
-	<div id="titleScreen">
-		<canvas id="squareEngineCanvas" width="500" height="500"></canvas>
-		<p id="logger"></p>
+	
+	<div id="wrapper">	
 	</div>
 
-	<script>
-		$(document).ready(function() {
-			
-			// $('<blockquote>Square Engine</blockquote>').appendTo("#hero"); 
-			$("#titleScreen").appendTo("#hero"); 
-			//gameGrid._setGameToUpdate();
-		});
-	</script>
 	<script src="games/titleScreen.js"></script>
 
 </body>

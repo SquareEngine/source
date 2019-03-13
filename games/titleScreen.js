@@ -4,26 +4,27 @@ const CANVAS_SCALE = 20;
 
 var gameGrid = new GameGrid(40, 20, CANVAS_SCALE);
 
-class Dots extends GameObjectMove{
+class SquareDot extends GameObjectMove{
 
     start(){
         this.storedPos = this.position.copy();
-        this.startCounter = 10;
+        this.floating = false;
+        this.startColor = new RGB(255,0,0);
     }
     
     mouseClick(mousePos){
-        this.setRandomDirection(10, false);
-    }
-
-    update(gameGrid){
-        if(this.startCounter <= 0){
-            if( this.position.sub(this.storedPos).len() <= 0.1){
-                this.direction = new Vector(0,0);
-                this.position = this.storedPos;
-                this.startCounter = 10;
-            }
+        if(this.floating==false){
+             while(this.direction.len()<0.01) this.setRandomDirection(1, false);
+             this.floating = true;
+             gameGrid._setGameToUpdate();
         }
-        else this.startCounter -= gameGrid.getDeltaTime();
+        else{
+            this.direction = new Vector(0,0);
+            this.position = this.storedPos;
+            this.setColorObject(this.startColor);
+            this.floating = false;
+            gameGrid._setGameToStart();
+        }
         
     }
 
@@ -32,10 +33,9 @@ class Dots extends GameObjectMove{
     screenLeft(){this.setRandomColor();}
     screenRight(){this.setRandomColor();}
 }
+gameGrid.addToFactory("SquareDot", SquareDot);
 
 gameGrid.start = function(){
-
-    gameGrid.addToFactory("Dots", Dots);
 
     gameGrid.color1 = RGB.makeRandomColor();
     gameGrid.color2 = RGB.makeRandomColor();
@@ -132,9 +132,10 @@ gameGrid.start = function(){
                     [2,6],
                 ];
 
-
+    
     let squareWord = [squareSXY, squareQXY, squareUXY, squareAXY, squareRXY, squareEXY];
     let startPos = [3,2];
+    let squareSpeed = 5
 
     for(let j=0; j<squareWord.length; j++){
         let word = squareWord[j];
@@ -142,7 +143,10 @@ gameGrid.start = function(){
         for(let i=0; i<word.length; i++){
             let posX = word[i][0] + startPos[0] + (j*6);
             let posY = word[i][1] + startPos[1];
-            gameGrid.createGameObject("squareA" + i, "Dots", x=posX, y=posY);
+            let square = gameGrid.createGameObject("squareA" + i, "SquareDot", x=posX, y=posY);
+            square.setSpeed(Math.ceil(Math.random()*squareSpeed));
+            //thisSquare.setColorObject(startColor)
+            //thisSquare.startColor = startColor;
         }
     }
 
@@ -155,12 +159,16 @@ gameGrid.start = function(){
         for(let i=0; i<word.length; i++){
             let posX = word[i][0] + startPos[0] + (j*6);
             let posY = word[i][1] + startPos[1];
-            gameGrid.createGameObject("squareB" + i, "Dots", x=posX, y=posY);
+            let square = gameGrid.createGameObject("squareB" + i, "SquareDot", x=posX, y=posY);
+            square.setSpeed(Math.ceil(Math.random()*squareSpeed));
+            //thisSquare.setColorObject(startColor)
+            //thisSquare.startColor = startColor;
         }
     }
     
-
-    //this._setGameToUpdate();
+    //setTimeout(function() { gameGrid._setGameToUpdate(); }, 5);
+    //gameGrid._gameState = gameStateEnum.UPDATE;
+    //;
 }
 
 gameGrid.update = function(){
@@ -184,6 +192,11 @@ gameGrid.update = function(){
     }
     else this.colorLerpCounter += this.getDeltaTime();
     //console.log("b")
+}
+
+gameGrid._startScreen = function(){
+    gameGrid._renderBackground();
+    gameGrid._render();
 }
 
 
