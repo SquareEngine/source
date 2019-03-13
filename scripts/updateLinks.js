@@ -6,7 +6,7 @@ function updateHeader(isIndex=false) {
 
     if(isIndex){
         logoPath = "images/logo.png";
-        pages = ["index.html", "../games.html", "../API.html", "../tutorial.html", "../about.html", "../contact.html"];
+        pages = ["index.html", "pages/games.html", "pages/API.html", "pages/tutorial.html", "pages/about.html", "pages/contact.html"];
     }
 
     $("img#logoLink").attr('src', logoPath);
@@ -21,15 +21,15 @@ function updateHeader(isIndex=false) {
 
 function updateFooter(isIndex=false){
 
-    imagePaths = ["../images/face.png", "../images/insta.png", "../images/twitter.png"]
+    let linkNames = ["Facebook", "Instagram", "Twitter"]
+    let imagePaths = ["../images/face.png", "../images/insta.png", "../images/twitter.png"]
     if(isIndex){
         imagePaths = ["images/face.png", "images/insta.png", "images/twitter.png"]
     }
 
-
     $('section.clearFlt a').each( function(index)
     {
-        let imageelement = ('<img src="' + imagePaths[index] + '" alt="Facebook" width="30"></a>')
+        let imageelement = ('<img src="' + imagePaths[index] + '" alt="' + linkNames[index] + '" width="30"></a>')
         $(this).append(imageelement)
         //attr('src', imagePaths[index]);
     });
