@@ -11,8 +11,10 @@
 <link rel= "stylesheet" type="text/css" href="css/main.css">
 
 <script> 
-	$(function(){
+	$( document ).ready(function() {
 		$("#wrapper").load("body.html"); 
+		$.getScript("games/titleScreen.js");
+		//$('body').after('<script src="games/titleScreen.js"></script>');
 	});
 </script> 
 
@@ -20,11 +22,10 @@
 </head>
 
 <body>
-	
+
 	<div id="wrapper">	
 	</div>
 
-	<script src="games/titleScreen.js"></script>
-
 </body>
+
 </html>
