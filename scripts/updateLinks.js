@@ -16,7 +16,7 @@ function updateHeader(isIndex=false) {
     {
         
         let linkElement = $('<a href="' + pages[index] + '" class="current"> '+ linkNames[index] + ' </a>')
-        this.append(linkElement)
+        $(this).append(linkElement)
         //this.attr('href', pages[index]);
     });
     
@@ -34,7 +34,7 @@ function updateFooter(isIndex=false){
     $('section.clearFlt a').each( function(index)
     {
         let imageElement = $('<img src="' + imagePaths[index] + '" alt="' + linkNames[index] + '" width="30"></a>')
-        this.append(imageElement)
+        $(this).append(imageElement)
         //attr('src', imagePaths[index]);
     });
     
