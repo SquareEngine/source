@@ -1,35 +1,53 @@
+
+
 <!DOCTYPE html>
 <html>
 
 <head>
 
 <meta charset = "UTF-8">
-<title>Snake Game</title>
+<title>Square Engine - Flappy Bird</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="../scripts/pageBuild.js"></script>
 <script src="../squareEngine.js"></script>
+
 <link rel= "stylesheet" type="text/css" href="../css/main.css">
+
+<script> 
+	$( document ).ready(function(){
+		$("div#header").load("../header.html"); 
+		$("div#footer").load("../footer.html"); 
+	});
+</script> 
+<script src="../scripts/pageBuild.js"></script>
 
 </head>
 
 <body>
-    <div id="FlappyDiv">
-        <h3>Flappy Bird</h3>
 
-        <canvas id="squareEngineCanvas"></canvas>
-        <div>
-            <p id="logger"></p>
-            <p id="info"></p>
-        </div>
+	<div id="wrapper">	
 
-    </div>
-    
-    <script> 
-            $(document).ready(function() {
-                $("#FlappyDiv").appendTo("#hero"); 
-            });
-    </script>
+		<div id="header"></div>
 
-    <script src="../games/flappyBird.js"></script>
+		<div id="hero">
+            <div id="canvasDiv">
+                <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+                <p id="logger"></p>
+                <p id="info"></p>
+                <div id="buttons">
+                    <input type="button" value="START" id="start">
+                    <input type="button" value="PAUSE" id="pause">
+                    <input type="button" value="RESET" id="reset">
+                </div>
+            </div>
+		</div>
+
+		<div id="footer"></div>
+
+	</div>
+
+	
+
 </body>
+<script src="../games/flappyBird.js"></script>
+
 </html>

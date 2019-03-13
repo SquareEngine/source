@@ -4,41 +4,48 @@
 <head>
 
 <meta charset = "UTF-8">
-<title>BreakOut</title>
+<title>Square Engine - Breakout</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="../scripts/pageBuild.js"></script>
 <script src="../squareEngine.js"></script>
+
 <link rel= "stylesheet" type="text/css" href="../css/main.css">
+
+<script> 
+	$( document ).ready(function(){
+		$("div#header").load("../header.html"); 
+		$("div#footer").load("../footer.html"); 
+	});
+</script> 
+<script src="../scripts/pageBuild.js"></script>
 
 </head>
 
 <body>
-    <div id="breakDiv">
-        <h3>BreakOut</h3>
 
-        <canvas id="squareEngineCanvas"></canvas>
-		
-		<div id="buttons">
-        <input type="button" value="START" id="start">
-        <input type="button" value="PAUSE" id="pause">
-        <input type="button" value="RESET" id="reset">
+	<div id="wrapper">	
+
+		<div id="header"></div>
+
+		<div id="hero">
+            <div id="canvasDiv">
+                <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+                <p id="logger"></p>
+                <p id="info"></p>
+                <div id="buttons">
+                    <input type="button" value="START" id="start">
+                    <input type="button" value="PAUSE" id="pause">
+                    <input type="button" value="RESET" id="reset">
+                </div>
+            </div>
 		</div>
-		
-        <div>
-            <p id="logger"></p>
-            <p id="info"></p>
-        </div>
 
-    </div>
-    
-    <script> 
-            $(document).ready(function() {
-                $("#breakDiv").appendTo("#hero"); 
-            });
-    </script>
+		<div id="footer"></div>
 
-    <script src="../games/breakOut.js"></script>
+	</div>
+
 	
-	
+
 </body>
+<script src="../games/breakOut.js"></script>
+
 </html>

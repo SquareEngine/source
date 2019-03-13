@@ -1,34 +1,52 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
 
 <meta charset = "UTF-8">
-<title>Square Engine</title>
+<title>Square Engine - Pong</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="../scripts/pageBuild.js"></script>
 <script src="../squareEngine.js"></script>
+
 <link rel= "stylesheet" type="text/css" href="../css/main.css">
+
+<script> 
+	$( document ).ready(function(){
+		$("div#header").load("../header.html"); 
+		$("div#footer").load("../footer.html"); 
+	});
+</script> 
+<script src="../scripts/pageBuild.js"></script>
 
 </head>
 
 <body>
 
-	<div id="tutorialDiv">
-        <p> Tutorial <br> </p>
+	<div id="wrapper">	
 
-        <hr>
-        <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
-        <hr>
-        <p id="logger"></p>
+		<div id="header"></div>
+
+		<div id="hero">
+            <div id="canvasDiv">
+                <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+                <p id="logger"></p>
+                <p id="info"></p>
+                <div id="buttons">
+                    <input type="button" value="START" id="start">
+                    <input type="button" value="PAUSE" id="pause">
+                    <input type="button" value="RESET" id="reset">
+                </div>
+            </div>
+		</div>
+
+		<div id="footer"></div>
+
 	</div>
 
-	<script> 
-        $(document).ready(function() {
-            $("#tutorialDiv").appendTo("#hero"); 
-        });
-        </script>
-    <script src="../games/pong.js"></script>
+	
 
 </body>
+<script src="../games/pong.js"></script>
+
 </html>

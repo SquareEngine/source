@@ -4,27 +4,38 @@
 <head>
 
 <meta charset = "UTF-8">
-<title>Square Engine</title>
+<title>Square Engine - API</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="../scripts/pageBuild.js"></script>
-<script src="../squareEngine.js"></script>
+<!-- <script src="../squareEngine.js"></script> -->
+
 <link rel= "stylesheet" type="text/css" href="../css/main.css">
+
+<script> 
+	$( document ).ready(function(){
+		$("div#header").load("../header.html"); 
+		$("div#footer").load("../footer.html"); 
+	});
+</script> 
+<script src="../scripts/pageBuild.js"></script>
 
 </head>
 
 <body>
 
-	<div id="apiDiv">
-		HERE GOES THE API 
+	<div id="wrapper">	
+
+		<div id="header"></div>
+
+		<div id="hero">
+			API TEXT GOES HERE
+		</div>
+
+		<div id="footer"></div>
+
 	</div>
 
-	<script>
-		$(document).ready(function() {
-			
-			// $('<blockquote>Square Engine</blockquote>').appendTo("#hero"); 
-			$("#apiDiv").appendTo("#hero"); 
-		});
-	</script>
+	
 
 </body>
+
 </html>

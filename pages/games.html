@@ -4,32 +4,43 @@
 <head>
 
 <meta charset = "UTF-8">
-<title>Square Engine</title>
+<title>Square Engine - Games</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="../scripts/pageBuild.js"></script>
+<!-- <script src="../squareEngine.js"></script> -->
+
 <link rel= "stylesheet" type="text/css" href="../css/main.css">
+
+<script> 
+	$( document ).ready(function(){
+		$("div#header").load("../header.html"); 
+		$("div#footer").load("../footer.html"); 
+	});
+</script> 
+<script src="../scripts/pageBuild.js"></script>
 
 </head>
 
 <body>
 
-<script> 
-$(document).ready(function() {
-	
-	let games = ["Snake", "Flappy Bird", "BreakOut"];
-	let gamePaths = ["snake.html", "flappyBird.html", "breakOut.html"];
+	<div id="wrapper">	
 
-	let ul = $('<ul></ul>');
-	$.each(games, function(index)
-	{
-		let li = $('<li/>').appendTo( ul );
-		let lia = $('<a/>').attr('href', gamePaths[index]).text( games[index] ).appendTo(li);
-	});
+		<div id="header"></div>
+
+		<div id="hero">
+			<ul id="games">
+				<li><a href="snake.html" class="current"> Dimitri Frazao </a></li>
+				<li><a href="flappyBirds.html"> Beni Ungur </a></li>
+				<li><a href="breakOut.html"> Tamires Boniol </a></li>
+
+			</ul>
+		</div>
+
+		<div id="footer"></div>
+
+	</div>
+
 	
-	$("#hero").empty();
-	ul.appendTo("#hero");
-	console.log("Games Page Done")
-});
-</script>
+
 </body>
+
 </html>
