@@ -12,12 +12,10 @@
 
 <script> 
 	$( document ).ready(function(){
-		$("div#header").load("header.html"); 
-		$("div#footer").load("footer.html"); 
-		updatePageLinks();
+		$("div#header").load("../header.html", updateHeader()); 
+		$("div#footer").load("../footer.html", updateFooter()); 
 	});
 </script> 
-<script src="../scripts/pageBuild.js"></script>
 
 </head>
 
