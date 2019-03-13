@@ -4,7 +4,7 @@
 <head>
 
 <meta charset = "UTF-8">
-<title>Snake Game</title>
+<title>BreakOut</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="../scripts/pageBuild.js"></script>
 <script src="../squareEngine.js"></script>
@@ -14,9 +14,16 @@
 
 <body>
     <div id="breakDiv">
-        <h3>Flappy Bird</h3>
+        <h3>BreakOut</h3>
 
         <canvas id="squareEngineCanvas"></canvas>
+		
+		<div id="buttons">
+        <input type="button" value="START" id="start">
+        <input type="button" value="PAUSE" id="pause">
+        <input type="button" value="RESET" id="reset">
+		</div>
+		
         <div>
             <p id="logger"></p>
             <p id="info"></p>
@@ -31,5 +38,7 @@
     </script>
 
     <script src="../games/breakOut.js"></script>
+	
+	
 </body>
 </html>

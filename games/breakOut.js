@@ -14,15 +14,29 @@ const SPEED_UP = 1;
 
 var gameGrid = new GameGrid(30, 20, CANVAS_SCALE);
 
-//game over and show the points
+//showing the points on game over
 gameGrid.gameOver = function(){
     gameGrid.print("Your points: " + gameGrid.points);
 }
 
+
+// JQuery events to handle buttons that affect the game
+$("#start").click( function(){ gameGrid._setGameToUpdate() });
+$("#pause").click(
+    function(){
+        if(gameGrid._getGameState()==gameStateEnum.PAUSED) gameGrid._setGameToUpdate()
+        else if(gameGrid._getGameState()==gameStateEnum.UPDATE) gameGrid._setGameToPaused()
+    }
+);
+$("#reset").click( function(){ gameGrid._reset(); });
+$("input, select#mode").change( function(){ gameGrid._reset(); } );
+
+
+//start the game
 gameGrid.start = function(){
 
     gameGrid._startText = ["BREAKOUT", "Enter: start", "Left arrow key: move left", "Right arrow key: move right"]
-
+	
     var screenHorizontalHalf = parseInt(gameGrid.getWidth()/2);
     var paddleVerticalPosition = gameGrid.getHeight()-0.5;
     gameGrid.setBackgroundColor(RGB.makeRandomColor());
@@ -68,16 +82,16 @@ gameGrid.start = function(){
             this.direction.y = 1;
             if(this.position.x > this.paddle.position.x) this.direction.x = 1;
             else this.direction.x = -1;
-            //this.gameOver();
-        }
+          }
+		  //gameOver text and r to restart the game
         else{
-            gameGrid._gameOverText = ["GAME OVER", "Press R to replay"];
+            gameGrid._gameOverText = ["GAME OVER", "Press R to restart"];
             this.gameOver();
         }
         
     }
 
-    //creating the blocks
+    //created the blocks
     var xCount = 9;
     var yCount = 3;
 
@@ -108,7 +122,8 @@ gameGrid.start = function(){
                 square.position.x = i-1;
                 block.pushSquare(square);
             }
-
+			
+			//check the colision
             block.ball = ball;
             block.update = function(gameGrid){
                 let col = this.checkCollision( this.ball );
@@ -121,9 +136,10 @@ gameGrid.start = function(){
                     //calculating the points
                     gameGrid.points += 1;
                     gameGrid.print("Your points: " + gameGrid.points);
-
+					
+					//if destroyed all the blocks will show the message that you won and the option to restart
                     if(gameGrid.points >= (xCount * yCount)){
-                        gameGrid._gameOverText = ["YOU WON!", "Press R to replay"];
+                        gameGrid._gameOverText = ["YOU WON!", "Press R to restart"];
                         this.gameOver();
                     }
                 }
@@ -131,8 +147,12 @@ gameGrid.start = function(){
         }
     }
 }
-
+//loop the game
 createGameLoop(gameGrid);
+
+//text on the game grid
+document.getElementById("info").innerHTML = "Use SPACE to pause game. \nUse 'R' to restart.";
+
 
 
 /** Validation Logic:

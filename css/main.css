@@ -103,7 +103,7 @@ footer{
 	background-color:rgb(184, 184, 184);
 	color:black;
 	width:100%;
-	min-width:960px;
+	min-width:100%;
 	text-align:center;
 	padding:.5px;
 	margin-top:10px;
@@ -139,28 +139,16 @@ h4{
 	font-size:1.2em;
 }
 
-
-main section {
-	display:inline-block; 
-	vertical-align:top;
-	padding:3em;
-	height:auto;	
+#contactDiv{
+	text-align:left;
+	padding-right:35em;
+	
 }
-
-main section.formSection {
-	width:45%;
-	display:inline-block;
-}
-
-main section.formSection h1 { 
-	font-size:30px;
-}
-
 main section#map {
 	vertical-align:center;
-	height:auto;
-	width:42%;
 	position:absolute;
+	padding-left:35em;
+	padding-top:7em;
 }
 
 #map{
@@ -209,10 +197,11 @@ fieldset.personal input{
 	text-align:center;
 }
 
+/*
 fieldset label{
 font-family: 'Poly', serif;
 }
-
+*/
 
 /*About page*/
 main {
