@@ -4,10 +4,10 @@
 <head>
 
 <meta charset = "UTF-8">
-<title>Square Engine</title>
+<title>Square Engine - Main</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<!-- <script src="scripts/pageBuild.js"></script> -->
 <script src="squareEngine.js"></script>
+<!-- <script src="scripts/pageBuild.js"></script> -->
 
 <link rel= "stylesheet" type="text/css" href="css/main.css">
 
@@ -15,7 +15,6 @@
 	$( document ).ready(function(){
 		$("div#header").load("header.html"); 
 		$("div#footer").load("footer.html"); 
-		
 	});
 </script> 
 
@@ -23,20 +22,23 @@
 </head>
 
 <body>
-	<div id="header"></div>
 
 	<div id="wrapper">	
+
+		<div id="header"></div>
+
 		<div id="hero">
-				<!-- <blockquote>Square Engine</blockquote> -->
+			<div id="titleScreen">
+				<canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+				<p id="logger"></p>
+			</div>
 		</div>
-		
-		<div id="titleScreen">
-			<canvas id="squareEngineCanvas" width="500" height="500"></canvas>
-			<p id="logger"></p>
-		</div>
+
+		<div id="footer"></div>
+
 	</div>
 
-	<div id="footer"></div>
+	
 
 </body>
 
