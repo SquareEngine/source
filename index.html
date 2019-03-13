@@ -13,9 +13,11 @@
 
 <script> 
 	$( document ).ready(function(){
-		$("#wrapper").load("body.html"); 
-		window.gameGrid = null;
-		loadGame();
+		$("#wrapper").load("body.html", function(){
+			window.gameGrid = loadGame();
+			}
+		); 
+		
 	});
 </script> 
 

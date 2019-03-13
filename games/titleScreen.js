@@ -201,6 +201,6 @@ function loadGame()
         gameGrid._render();
     }
 
-    window.gameGrid = gameGrid;
-    createGameLoop(window.gameGrid);
+    createGameLoop(gameGrid);
+    return gameGrid;
 }
