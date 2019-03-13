@@ -2,7 +2,7 @@
 
 var gameGrid = null;
 
-loadGame()
+function loadGame()
 {
     const CANVAS_SCALE = 20;
 
