@@ -1,5 +1,7 @@
 // title screen
 
+var gameGrid;
+
 loadGame()
 {
     const CANVAS_SCALE = 20;
