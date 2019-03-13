@@ -1,12 +1,12 @@
 // title screen
 
-var gameGrid = null;
+var theGameGrid = null;
 
 function loadGame()
 {
     const CANVAS_SCALE = 20;
 
-    gameGrid = new GameGrid(40, 20, CANVAS_SCALE);
+    let gameGrid = new GameGrid(40, 20, CANVAS_SCALE);
 
     class SquareDot extends GameObjectMove{
 
@@ -203,6 +203,6 @@ function loadGame()
         gameGrid._render();
     }
 
-
-    createGameLoop(gameGrid);
+    theGameGrid = gameGrid;
+    createGameLoop(theGameGrid);
 }
