@@ -64,7 +64,13 @@ nav ul li a:hover{
 	color:rgb(255, 153, 0);/*yellow for the visted color*/
 }
 
+#gameButtons{
+	width: 800px;
+	border-radius: 15px;
+	background-color:rgb(153, 153, 153);
+	padding: 15px;
 
+}
 
 #hero {
 	width:100%;
