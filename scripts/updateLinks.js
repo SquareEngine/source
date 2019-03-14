@@ -13,7 +13,7 @@ function updateHeader(isIndex=false) {
     }
 
     $("div#logoDiv").append('<a href="' + logoLink + '" id="logoLink"></a>');
-    $("a#logoLink").append('<img src="' + logoPath +  '"  alt="Logo" width="60">');
+    $("a#logoLink").append('<img src="' + logoPath +  '"  alt="Logo" width="40">');
     $('ul#pages li').each( function(index)
     {      
         $(this).append('<a href="' + pages[index] + '" class="current"> '+ linkNames[index] + ' </a>')

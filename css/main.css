@@ -71,6 +71,7 @@ nav ul li a:hover{
 	margin: auto;
 	text-align:center;
 }
+
 #gameButtons{
 	border: none;
     display: block;
@@ -78,7 +79,10 @@ nav ul li a:hover{
 	border-radius: 15px;
 	background-color:rgb(153, 153, 153);
 	padding: 15px;
-	margin: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 15px;
+	margin-bottom: 15px;
 	text-align:center;
 }
 
