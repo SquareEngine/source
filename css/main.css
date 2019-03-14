@@ -28,7 +28,7 @@ header {
 	width: 100%;
 	margin: auto;
 	background-color:rgb(155, 155, 155);
-	min-height: 350px;
+	min-height: 100px;
 }
 
 header nav ul li {
@@ -80,6 +80,7 @@ nav ul li a:hover{
 	border-radius: 15px;
 	background-color:rgb(153, 153, 153);
 	padding: 15px;
+	top: 15px;
 	margin: auto;
 
 	text-align:center;
@@ -87,6 +88,7 @@ nav ul li a:hover{
 
 #aboutLogo{
 	text-align: center;
+	padding: 5px;
 }
 
 #hero {
