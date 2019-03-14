@@ -65,16 +65,20 @@ nav ul li a:hover{
 }
 
 #canvasDiv{
+	border: none;
+    display: block;
 	padding: 15px;
-	margin: 15px;
+	margin: auto;
 	text-align:center;
 }
 #gameButtons{
+	border: none;
+    display: block;
 	width: 800px;
 	border-radius: 15px;
 	background-color:rgb(153, 153, 153);
 	padding: 15px;
-	margin: 15px;
+	margin: auto;
 	text-align:center;
 }
 
@@ -87,8 +91,9 @@ nav ul li a:hover{
 	height:100%;
 	min-height:800px;
 	padding: 15;
+	margin: auto;
 	text-align:center;
-    display: inline-block;
+    display: block;
 	justify-content: center;
 	align-items: center;	
 }
