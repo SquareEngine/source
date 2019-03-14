@@ -83,7 +83,7 @@ nav ul li a:hover{
 	min-height:800px;
 	padding: 15;
 	text-align:center;
-    display: block;
+    display: inline-block;
 	justify-content: center;
 	align-items: center;	
 }
