@@ -22,13 +22,13 @@ body {
 	margin: auto;
 	width:100%;
 	min-width:960px;
-	display: block
 }
 
 header {
 	width: 100%;
 	margin: auto;
 	background-color:rgb(155, 155, 155);
+	min-height: 200px;
 }
 
 header nav ul li {
