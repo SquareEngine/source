@@ -64,13 +64,18 @@ nav ul li a:hover{
 	color:rgb(255, 153, 0);/*yellow for the visted color*/
 }
 
+#canvasDiv{
+	padding: 15px;
+	margin: 15px;
+	text-align:center;
+}
 #gameButtons{
 	width: 800px;
 	border-radius: 15px;
 	background-color:rgb(153, 153, 153);
 	padding: 15px;
 	margin: 15px;
-
+	text-align:center;
 }
 
 #aboutLogo{
