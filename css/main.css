@@ -69,7 +69,12 @@ nav ul li a:hover{
 	border-radius: 15px;
 	background-color:rgb(153, 153, 153);
 	padding: 15px;
+	margin: 15px;
 
+}
+
+#aboutLogo{
+	text-align: center;
 }
 
 #hero {
@@ -78,7 +83,7 @@ nav ul li a:hover{
 	min-height:800px;
 	padding: 15;
 	text-align:center;
-    display: flex;
+    display: block;
 	justify-content: center;
 	align-items: center;	
 }
