@@ -152,16 +152,22 @@ footer{
 .footerIcons{
 	text-align:left;
 	float: left;
+	margin: auto;
+	padding: 10px;
 }
 
 .footerNames{
 	float: center;
 	text-align:center;
+	margin: auto;
+	padding: 10px;
 }
 
 .footerCopy{
 	float: right;
 	text-align:right;
+	margin: auto;
+	padding: 10px;
 }
 	
 	
