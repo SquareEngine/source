@@ -30,7 +30,6 @@ header {
 	margin: auto;
 	background-color:rgb(155, 155, 155);
 	min-height: 80px;
-	padding: 15px;
 }
 
 header nav ul li {
@@ -49,15 +48,15 @@ header nav ul li {
 } */
 
 .logoDiv{
+	text-align:left;
 	float: left;
-	padding: 15px;
+	margin-left: 15px;
+	padding: 10px;
 	
 }
 .navBar{
 	float: center;
 	text-align:center;
-	width:80%;
-	top: 15px; 
 }
 
 
