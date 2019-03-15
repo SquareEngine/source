@@ -48,13 +48,14 @@ header nav ul li {
 	width:80%; 
 } */
 
-div#logoDiv{
+.logoDiv{
 	float: left;
 	padding: 15px;
+	
 }
-nav#navBar{
-	text-align:center;
+.navBar{
 	float: center;
+	text-align:center;
 	width:80%;
 	top: 15px; 
 }
