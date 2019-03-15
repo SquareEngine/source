@@ -136,7 +136,7 @@ gameGrid.start = function(){
     
     let squareWord = [squareSXY, squareQXY, squareUXY, squareAXY, squareRXY, squareEXY];
     let startPos = [3,2];
-    let squareSpeed = 5
+    let squareSpeed = 5;
 
     for(let j=0; j<squareWord.length; j++){
         let word = squareWord[j];

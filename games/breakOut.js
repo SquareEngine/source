@@ -9,7 +9,7 @@
  Seeting ball colision, counting points and game over. 
 */
 
-const CANVAS_SCALE = 20;
+const CANVAS_SCALE = 26;
 const SPEED_UP = 1;
 
 var gameGrid = new GameGrid(30, 20, CANVAS_SCALE);

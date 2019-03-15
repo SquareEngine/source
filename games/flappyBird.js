@@ -2,7 +2,7 @@
 
 /*Constants*/
 const WIDTH = 35; //canvas width
-const HEIGHT = 25.6; //canvas height
+const HEIGHT = 25; //canvas height
 const CANVAS_SCALE = 20; // canvas scale
 const GRAVITY = 1.25; //bird fall gravity
 const FALL_LIMIT = 0.15; //bird fall acceleration
@@ -68,7 +68,7 @@ var gameGrid = new GameGrid(WIDTH, HEIGHT, CANVAS_SCALE);
 gameGrid.start = function() {
     
     gameGrid._startText = ["TO PLAY","Use the up arrow","OR","Touch screen"];
-    gameGrid._gameOverText = ["GAME OVER", "Press any key to continue"];
+    gameGrid._gameOverText = ["GAME OVER", "Press R to reset"];
     gameGrid.setBackgroundColor(new RGB(0,104,204));
     gameGrid.points = 0;
     gameGrid.print("Score : " + gameGrid.points);
@@ -123,11 +123,11 @@ gameGrid.start = function() {
 }//end of gameGrid start function
 
 /*function to start or restart game*/
-gameGrid.click = function() {
+gameGrid.click = function(key=false) {
     if(gameGrid._getGameState() == gameStateEnum.START) {
         gameGrid._setGameToUpdate();
     }else if(gameGrid._getGameState() == gameStateEnum.OVER) {
-        gameGrid._reset();
+        if(key==keyCodesEnum.RESET) gameGrid._reset();
     }
 }//end of click function
 
@@ -138,7 +138,7 @@ gameGrid.mouseClick = function(mousePosition) {
 
 /*use keyboard press to resume game using click function*/
 gameGrid.inputKeyDown = function(keyCode) {
-    gameGrid.click();
+    gameGrid.click(keyCode);
 }
 
 createGameLoop(gameGrid); //run the game loop
