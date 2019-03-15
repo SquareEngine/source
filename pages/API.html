@@ -62,8 +62,51 @@
 				<p id="fullText">
 					The library also comes with a few convenience classes: 2D Vector class with methods to do vector math. A boundingBox class to help with collision detection. A square class that extends boundingBox and adds rendering and color methods. An RGB color class to help set gameObject colors. 
 				</p>
+
+				<h2>GameGrid methods</h2>
+				
+				<p id="fullText">
+					Here's a list of the most important methods you want to override to create game behavior. These methods don't do anything so you can use them anyway you like. The most important one is probably update(). This method is called 60 times per second while the game is running.
+				</p>
+				<img src="../images/api/gameGrid0.PNG" alt="" width="700">
+
+				<p id="fullText">
+					These methods can be redefined to render squares or text at start, update, pause or gameOver. They are called 60 times per second.
+				</p>
+				<img src="../images/api/gameGrid1.PNG" alt="" width="700">
+
+				<p id="fullText">
+					These methods are called when user inputs keyboard or mouse data. They must have at least 1 argument, which is the input data. 
+				</p>
+				<img src="../images/api/gameGrid2.PNG" alt="" width="700">
+
+				<p id="fullText">
+					These methods are NOT meant to be overriden. You use them to get data from the gameGrid.
+				</p>
+				<img src="../images/api/gameGrid3.PNG" alt="" width="700">
+
+				<p id="fullText">
+					These methods are are used to create and get gameObjects form the gameGrid. You can also add your new gameObject classes to the gameGrid factory. That way the gameGrid can create and keep track of your new gameObject.
+				</p>
+				<img src="../images/api/gameGrid4.PNG" alt="" width="700">
+
+				<p>
+					Use these to print HTML text to the logger element.
+				</p>
+				<img src="../images/api/gameGrid5.PNG" alt="" width="700">
+
+				<p id="fullText">
+					You can use these methods to render squares and text on the screen.
+				</p>
+				<img src="../images/api/gameGrid6.PNG" alt="" width="700">
+
+				<p id="fullText">
+					If you want your game to be tiled based you can use these methods to help you get and set tile data. The gameGrid has a tile array that keeps track of tile objects. 
+				</p>
+				<img src="../images/api/gameGrid7.PNG" alt="" width="700">
+
 				<br>
-				<a href="tutorial.html">BACK TO TOP</a> 
+				<a href="API.html">BACK TO TOP</a> 
 				<br>
 				<br>
 				<img src="../images/logo.png"   width="60">

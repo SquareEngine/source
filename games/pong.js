@@ -136,8 +136,9 @@ gameGrid.start = function(){
         } 
     }
 
+    // closes our start method
 }
 
-// finally we call our createGameLoop function and give it the gameGrid
+// finally we call our createGameLoop function and pass the gameGrid as an argument :)
 
 createGameLoop(gameGrid);
