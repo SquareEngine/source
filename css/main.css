@@ -125,7 +125,7 @@ p#fullText{
 #hero {
 	width:100%;
 	height:100%;
-	min-height:800px;
+	min-height:900px;
 	padding: 15;
 	margin: auto;
 	text-align:center;
@@ -136,14 +136,13 @@ p#fullText{
 
 
 footer{
-	position: absolute;
-   	bottom:0;
 	font-family: 'Merriweather', serif;
 	font-size:1em;
 	background-color:rgb(153, 153, 153);
 	color:rgb(51, 51, 51);
 	width:100%;
 	min-width:960px;
+	height: auto;
 	text-align:center;
 	padding:.5px;
 	margin-top:10px;
