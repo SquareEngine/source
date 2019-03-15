@@ -349,7 +349,6 @@ class GameGrid{
 
 }
 
-
 class GameObject {
     /*
     our base class for gameObjects.

@@ -67,8 +67,8 @@ nav ul li a:hover{
 
 #canvasDiv{
 	border: none;
-    display: block;
-	padding: 15px;
+    display: inline-block;
+	padding: 10px;
 	margin: auto;
 	text-align:center;
 }
@@ -76,7 +76,7 @@ nav ul li a:hover{
 #gameButtons{
 	border: 15px;
     display: block;
-	width: 800px;
+	width: 850px;
 	border-radius: 15px;
 	background-color:rgb(153, 153, 153);
 	padding: 15px;

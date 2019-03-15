@@ -31,17 +31,75 @@
 		<div id="header"></div>
 
 		<div id="hero">
-            <div id="canvasDiv">
-                <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
-                <p id="logger"></p>
-				<p id="info"></p>
+            
 			<div id="gameButtons">
-                <div id="buttons">
-                    <input type="button" value="START" id="start">
-                    <input type="button" value="PAUSE" id="pause">
-                    <input type="button" value="RESET" id="reset">
+				<div id="canvasDiv">
+					<canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+					<p id="logger"></p>
+					<p id="info"></p>
 				</div>
-			</div>
+				<hr>
+          
+				<p>
+					The first step is to load the library inside your HTML file
+				</p>
+				<img src="../images/tut0.PNG" alt="" width="700">
+				<p>
+					Then make sure you have a canvas and paragraph elements with these IDs
+				</p>
+				<img src="../images/tut1.PNG" alt="" width="400">
+
+				<p>
+					Then after the body element is loaded you can then call your game.js file. <br>
+					You can also call your game.js file on the onLoad or on $.ready().
+				</p>
+				<img src="../images/tut2.PNG" alt="" width="400">
+
+				<p>
+					The only 2 javascript lines needed to have a basic game working is:
+				</p>
+				<img src="../images/tut3.PNG" alt="" width="400">
+				<p>
+					The first line you are creating a gameGrid object and passing it's X units, Y units and scale. <br>
+					The X and Y units are how many 1 unit squares you can have horizontally and vertically. <br>
+					The scale is just how many pixels per unit you will have. X=10 * scale=100 = 1000 pixels horixontally. <br>
+					
+				</p>
+				<p>
+					In the second line you are just giving gameGrid object to the createGameLoop function. <br>
+					That's all you need to get a gameGrid running. <br>
+					Now, you can't do much with a blank screen. <br>
+					You probably want to create gameObjects and overwrite some of its methods. <br>
+				</p>
+				<p>
+					You can look at the <a href="https://github.com/SquareEngine/source/blob/master/games/pong.js">pong</a> game example file at Github.
+				</p> 
+				<h2>Creating and setting a gameGrid</h2>
+				<img src="../images/tut4.PNG" alt="" width="700">
+
+				<h2>Define game inside start function</h2>
+				<img src="../images/tut5.PNG" alt="" width="700">
+
+				<h2>Create ball</h2>
+				<img src="../images/tut6.PNG" alt="" width="700">
+
+				<h2>Define ball touch left screen</h2>
+				<img src="../images/tut7.PNG" alt="" width="700">
+
+				<h2>Define ball touch right screen</h2>
+				<img src="../images/tut8.PNG" alt="" width="700">
+
+				<h2>Create our paddles</h2>
+				<img src="../images/tut9.PNG" alt="" width="700">
+
+				<h2>Give gameGrid to createGameLoop function</h2>
+				<img src="../images/tut10.PNG" alt="" width="700">
+				<br>
+				<a href="tutorial.html">BACK TO TOP</a> 
+				<br>
+				<br>
+				<img src="../images/logo.png"   width="60">
+			
             </div>
 		</div>
 
