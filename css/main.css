@@ -78,10 +78,9 @@ canvas {
 	box-shadow: 10px 10px 5px rgb(90, 90, 90);
 }
 
-#gameButtons{
+#mainBody{
 	border: 15px;
     display: block;
-	width: 900px;
 	border-radius: 15px;
 	background-color:rgb(153, 153, 153);
 	padding: 15px;
@@ -90,6 +89,21 @@ canvas {
 	margin-top: 15px;
 	margin-bottom: 15px;
 	text-align:center;
+}
+
+.rules{
+	width: 500px;
+	float: left;
+}
+.gameScreen {
+	width: 650px;
+	float: left;
+}
+.normal{
+	width: 950px;
+}
+.clearfix{
+    clear:both
 }
 
 p#fullText{

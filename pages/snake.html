@@ -7,6 +7,7 @@
 <meta charset = "UTF-8">
 <title>Square Engine - Snake</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="../squareEngine.js"></script>
 <script src="../scripts/updateLinks.js"></script>
 <link rel= "stylesheet" type="text/css" href="../css/main.css">
@@ -33,7 +34,7 @@
 		<div id="hero">
             
 
-            <div id="gameButtons">
+            <div class="gameScreen" id="mainBody">
                 <h2>Snake</h2>
                 <div id="canvasDiv">
                     <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
@@ -44,69 +45,83 @@
                     <input type="button" value="PAUSE" id="pause">
                     <input type="button" value="RESET" id="reset">
                 </div>
-                <hr>
-                <h2>Game options:</h2>
-                <div>
-                    Game mode 
-                    <select id="mode">
-                        <option value="one">1 player</option>
-                        <option value="two">2 players</option>
-                        <option value="AI">player vs AI</option>
-                        <option value="doubble">doubble snake</option>
-                    </select>
-                </div>
-                <div>
-                    <span style="color: #ff0000">Apples</span> (min 1 max 25) <input type="number" value=1 min=1 max=25 id="apples"><br>
-                    <span style="color: #3700ff">Obstacles</span> (min 0 max 25) <input type="number" value=0 min=0 max=25 id="obstacles"><br>    
-                    Grid tile units X & Y (min 8 max 32) and must be divisible by 2 <input type="number" value=20 min=8 max=32 step = 2 id="units"><br>
-                    Speed increase when eating appple (min 0 max 10) <input type="number" value=1 min=0 max=100 id="sppedInc"><br>
-
-                    Snakes teleport around screen<input type="checkbox" id="wrapAround" checked><br>
-                    Place <span style="color: #c4b000">Portals</span><input type="checkbox" id="portals">
-                </div>
-                <hr>
-                <h2>Rules:</h2>
-                <p>
-                    Snake must eat apples to grow while avoiding itself, other snakes and obstacles.<br>
-                    If you grow up until you fill the game screen you win.<br>
-                    If you choose 2 Player or AI mode the surviving snake left wins the game.<br>
-                    If you choose doubble snake you lose the game if one of the 2 snakes dies.<br>
-                </p>
-
-                <hr>
-                <h2>Game Objects:</h2>
-                <p>
-                    Red squares are apples that grow the snake.<br>
-                    Blue square are obstacles that kills the snake.<br>
-                    Yellow squares are portals that teleports the snake.<br>
-                    A snake is made out of green scquares.<br>
-                    A snake head is a single dark green square.<br>
-                    A snake body is a green square + a smaller & lighter green square.<br>
-                </p>
-                <hr>
-                <h2>Keyboard inputs:</h2>
-                <P>
-                    Enter: start the game.<br>
-                    Spacebar: pause & unpause.<br>
-                    R: resets the game.<br>
-                    Arrow keys: Player 1 up, down, left & right control.<br>
-                    WASD keys: Player 2 up, down, left & right control.<br>
-                </P>
-
-                <hr>
-                <h2>Mouse inputs:</h2>
-                <p>
-                    You can also mouse click the screen to move Player 1.<br>
-                    The screen is split into 4 triagles by an X.<br>
-                    Each triangle is a screen relative direction. <br>
-                    Clicking at the start screen will start the game. <br>
-                    Clicking at the gameOver screen will reset the game.
-                </p>
-
-                <hr>
-                <p>CSD 122 Javascript & JQuery final project</p>
-                <p>Dimitri Frazao 2019</p>
             </div>
+            <div class="rules" id="mainBody">
+                
+                <h2>Snake</h2>
+                <div id="accordion">
+                    <h3>Game options:</h3>
+                    <div>
+                        Game mode 
+                        <select id="mode">
+                            <option value="one">1 player</option>
+                            <option value="two">2 players</option>
+                            <option value="AI">player vs AI</option>
+                            <option value="doubble">doubble snake</option>
+                        </select>
+                        <span style="color: #ff0000">Apples</span> (min 1 max 25) <input type="number" value=1 min=1 max=25 id="apples"><br>
+                        <span style="color: #3700ff">Obstacles</span> (min 0 max 25) <input type="number" value=0 min=0 max=25 id="obstacles"><br>    
+                        Grid tile units X & Y (min 8 max 32) and must be divisible by 2 <input type="number" value=20 min=8 max=32 step = 2 id="units"><br>
+                        Speed increase when eating appple (min 0 max 10) <input type="number" value=1 min=0 max=100 id="sppedInc"><br>
+
+                        Snakes teleport around screen<input type="checkbox" id="wrapAround" checked><br>
+                        Place <span style="color: #c4b000">Portals</span><input type="checkbox" id="portals">
+                    </div>
+                
+                    <h3>Rules:</h3>
+                    <div>
+                        <p>
+                            Snake must eat apples to grow while avoiding itself, other snakes and obstacles.<br>
+                            If you grow up until you fill the game screen you win.<br>
+                            If you choose 2 Player or AI mode the surviving snake left wins the game.<br>
+                            If you choose doubble snake you lose the game if one of the 2 snakes dies.<br>
+                        </p>
+                    </div>
+
+                    <h3>Game Objects:</h3>
+                    <div>
+                        <p>
+                            Red squares are apples that grow the snake.<br>
+                            Blue square are obstacles that kills the snake.<br>
+                            Yellow squares are portals that teleports the snake.<br>
+                            A snake is made out of green scquares.<br>
+                            A snake head is a single dark green square.<br>
+                            A snake body is a green square + a smaller & lighter green square.<br>
+                        </p>
+                    </div>
+                
+                    
+                    <h3>Keyboard inputs:</h3>
+                    <div>
+                        <P>
+                            Enter: start the game.<br>
+                            Spacebar: pause & unpause.<br>
+                            R: resets the game.<br>
+                            Arrow keys: Player 1 up, down, left & right control.<br>
+                            WASD keys: Player 2 up, down, left & right control.<br>
+                        </P>
+                    </div>
+
+                    <h3>Mouse inputs:</h3>
+                    <div>
+                        <p>
+                            You can also mouse click the screen to move Player 1.<br>
+                            The screen is split into 4 triagles by an X.<br>
+                            Each triangle is a screen relative direction. <br>
+                            Clicking at the start screen will start the game. <br>
+                            Clicking at the gameOver screen will reset the game.
+                        </p>
+                    </div>
+                    
+                    <h3>Developer:</h3>
+                    <div>
+                        <p>CSD 122 Javascript & JQuery final project</p>
+                        <p>Dimitri Frazao 2019</p>
+                    </div>
+                    
+                </div>
+            </div>
+            <div id="clearfix"></div>
 		</div>
 
 		<div id="footer"></div>
@@ -116,6 +131,12 @@
 	
 
 </body>
+<script>
+$( function() {
+    $( "#accordion" ).accordion();
+    console.log("acord");
+} );
+</script>
 <script src="../games/snake.js"></script>
 
 </html>

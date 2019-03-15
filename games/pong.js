@@ -2,14 +2,14 @@
 
 // first we set our constants
 const CANVAS_X_UNITS = 36;
-const CANVAS_y_UNITS = 20;
+const CANVAS_Y_UNITS = 20;
 const CANVAS_SCALE = 20;
 const SPEED_UP = 3;
 const BALL_SPEED = 15;
 
 // here we create a gameGrid object and give it a X & Y units 
 //and the canvas scale (how many pixels X & Y will be)
-var gameGrid = new GameGrid(CANVAS_X_UNITS, CANVAS_y_UNITS, CANVAS_SCALE);
+var gameGrid = new GameGrid(CANVAS_X_UNITS, CANVAS_Y_UNITS, CANVAS_SCALE);
 
 // lets set our gameGrid background color to a random color!
 // first create a random color
