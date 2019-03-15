@@ -145,28 +145,27 @@ footer{
 	height: auto;
 	text-align:center;
 	padding:.5px;
-	margin-bottom: 0px;
+	margin-top:10px;
 }
 
 
 .footerIcons{
 	text-align:left;
 	float: left;
-	margin: auto;
+	margin-left: 15px;
 	padding: 10px;
 }
 
 .footerNames{
 	float: center;
 	text-align:center;
-	margin: auto;
 	padding: 10px;
 }
 
 .footerCopy{
 	float: right;
 	text-align:right;
-	margin: auto;
+	margin-right: 15px;
 	padding: 10px;
 }
 	
