@@ -81,7 +81,7 @@ canvas {
 #gameButtons{
 	border: 15px;
     display: block;
-	width: 850px;
+	width: 900px;
 	border-radius: 15px;
 	background-color:rgb(153, 153, 153);
 	padding: 15px;
@@ -90,6 +90,16 @@ canvas {
 	margin-top: 15px;
 	margin-bottom: 15px;
 	text-align:center;
+}
+
+p#fullText{
+	width: 80%;
+	word-wrap: break-word;
+	text-align:justify;
+	margin: auto;
+	text-indent: 30px;
+	padding: 5px;
+	line-height: 150%;
 }
 
 #aboutLogo{
@@ -243,12 +253,13 @@ main {
 /*Rotating Banner*/
 .main-banner {
 	margin: 0 auto;
-	width: auto;
+	width: 700px;
 	height: 300px;
 	background-color: #fff;
 	overflow: hidden;
 	position: relative;
 	border-radius: 15px;
+	box-shadow: 10px 10px 5px rgb(90, 90, 90);
 }
 
 .main-banner .imgban {
@@ -301,6 +312,14 @@ main {
 .imgbanbtn-next {
 	right: 5px;
 	background-image: url(../images/banner/arrow-right.png);
+	background-size: 60%;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.imgbanbtn-before {
+	left: 5px;
+	background-image: url(../images/banner/arrow-left.png);
 	background-size: 60%;
 	background-position: center;
 	background-repeat: no-repeat;

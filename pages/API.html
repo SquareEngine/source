@@ -35,51 +35,32 @@
 				<div id="aboutLogo">
 					<img src="../images/logo.png"   width="60">
 				</div>
-				<p>
-					<a href="https://github.com/SquareEngine/source">Square engine </a>is available online at Github. <br>
-					If you have question setting up a game please check the <a href="tutorial.html">tutorial</a> page. <br>
-
+				<p id="fullText">
+					<a href="https://github.com/SquareEngine/source">Square engine </a>is available online at Github.
+					If you have question setting up a game please check the <a href="tutorial.html">tutorial</a> page. 
 				</p>
 
 				<h2>The 2 main classes</h2>
 				<img src="../images/api0.PNG" alt="" width="300">
-				<p>
-					The gameGrid class is the actual game engine itself. <br>
-					It creates and maintains the gameObjects, input events and canvas methods. <br>
-					The gameGrid tick() methods is called 60 times a second. <br>
-					The tick will then call the appropriate methods depending on its game state. <br>
+				<p id="fullText">
+					The gameGrid class is the actual game engine itself. It creates and maintains the gameObjects, input events and canvas methods. The gameGrid tick() methods is called 60 times a second. The tick will then call the appropriate methods depending on its game state.
 				</p>
-				<p>
-					The states are: START, UPDATE, PAUSED and GAMEOVER. <br>
-					The STARTS state will just render the start screen and wait for input. <br>
-					The UPDATE is the running game and it will update all its game objects an drender them. <br>
-					The PAUSED state skips gameObject updates but calls the render method. <br>
-					The GAMEOVER stops all updates.
+				<p id="fullText">
+					The states are: START, UPDATE, PAUSED and GAMEOVER. The STARTS state will just render the start screen and wait for input. The UPDATE is the running game and it will update all its game objects an drender them. The PAUSED state skips gameObject updates but calls the render method. The GAMEOVER stops all updates.
 				</p>
-				<p>
-					The gameObject is just a simple square that can be created by the gameGrid. <br>
-					You can change it's position, size, color, speed and many other attributes. <br>
-					You must override a few gameObject methods to get it to do stuff. <br>
-					The update() method is called 60 times per frame and it's mostly used to define behavior. <br>
+				<p id="fullText">
+					The gameObject is just a simple square that can be created by the gameGrid. You can change it's position, size, color, speed and many other attributes. You must override a few gameObject methods to get it to do stuff. The update() method is called 60 times per frame and it's mostly used to define behavior. 
 				</p>
 
 				<h2>Extended gameObjects</h2>
 				<img src="../images/api1.PNG" alt="" width="500">
-				<p>
-					Besides the basic gameObject, the library comes with 3 extended gameObjects. <br>
-					gameObjectMove is just a simple gameObject but be default it takes keyboard inputs to move. <br>
-					gameObjectPaddle is a gameObjectMove but with screen limits. <br>
-					gameObjectBall is a gameObject that keeps moving and bounces against the screen edges. <br>
-					These 3 classes are odeal to make simple games. <br>
+				<p id="fullText">
+					Besides the basic gameObject, the library comes with 3 extended gameObjects. gameObjectMove is just a simple gameObject but be default it takes keyboard inputs to move. gameObjectPaddle is a gameObjectMove but with screen limits. gameObjectBall is a gameObject that keeps moving and bounces against the screen edges. These 3 classes are odeal to make simple games. 
 				</p>
 				<h2>Other classes</h2>
 				<img src="../images/api2.PNG" alt="" width="400">
-				<p>
-					The library also comes with a few convenience classes:  <br>
-					2D Vector class with methods to do vector math. <br>
-					A boundingBox class to help with collision detection. <br>
-					A square class that extends boundingBox and adds rendering and color methods. <br>
-					An RGB color class to help set gameObject colors. <br>
+				<p id="fullText">
+					The library also comes with a few convenience classes: 2D Vector class with methods to do vector math. A boundingBox class to help with collision detection. A square class that extends boundingBox and adds rendering and color methods. An RGB color class to help set gameObject colors. 
 				</p>
 				<br>
 				<a href="tutorial.html">BACK TO TOP</a> 

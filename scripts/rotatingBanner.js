@@ -1,10 +1,24 @@
 var bannerTimer = 2500;
 var bannerStatus = 1;
 
-window.onload = function() {
+$( document ).ready(function() {
     bannerLoop();
     console.log(bannerStatus);
-}
+});
+
+
+
+$( "#imgban1" ).click( function(){
+    window.location.href = "snake.html";
+});
+
+$( "#imgban2" ).click( function(){
+    window.location.href = "breakOut.html";
+});
+
+$( "#imgban3" ).click( function(){
+    window.location.href = "flappyBird.html";
+});
 
 //Start the banner loop
 var startBannerLoop = setInterval(function() {
@@ -25,6 +39,12 @@ document.getElementById("main-banner").onmouseleave = function() {
 
 //Next button functionality
 document.getElementById("imgbanbtn-next").onclick = function() {
+    bannerLoop();
+}
+
+document.getElementById("imgbanbtn-before").onclick = function() {
+    bannerStatus -= 1;
+    if(bannerStatus < 1) bannerStatus = 3;
     bannerLoop();
 }
 

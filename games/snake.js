@@ -592,18 +592,19 @@ gameGrid.update = function(){
 }
 
 // here we render our checkerboard bacground
-gameGrid.greyColor = new RGB(160,160,160);
+gameGrid.greyColor1 = new RGB(140,140,160);
+gameGrid.greyColor2 = new RGB(160,160,180);
 gameGrid._renderBackground = function(){
     this.renderSquare(
         position = new Vector(0,0), 
         size = new Vector(this.getWidth(), this.getHeight()), 
-        color = this._backGroundColor,
+        color = this.greyColor1,
         scaleOffset = false
         );
     for(let i=0; i<this._tiles.length; i++){
         let position = this.convertIndexToVector(i);
         if( (parseInt(i/this._width)+i) %2 ){
-            this.renderSquare(position, size=new Vector(1,1), color=this.greyColor );
+            this.renderSquare(position, size=new Vector(1,1), color=this.greyColor2 );
         }
     }
 } 
