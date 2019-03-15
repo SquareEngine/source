@@ -135,10 +135,12 @@ p#fullText{
 
 
 footer{
+	position:absolute;
+   	bottom:0;
 	font-family: 'Merriweather', serif;
 	font-size:1em;
 	background-color:rgb(153, 153, 153);
-	color:black;
+	color:rgb(51, 51, 51);
 	width:100%;
 	min-width:960px;
 	text-align:center;
