@@ -1,7 +1,7 @@
 // a simple Flappy Bird clone using the squareEngine 
 
 /*Constants*/
-const WIDTH = 28; //canvas width
+const WIDTH = 35; //canvas width
 const HEIGHT = 25.6; //canvas height
 const CANVAS_SCALE = 20; // canvas scale
 const GRAVITY = 1.25; //bird fall gravity
@@ -10,7 +10,7 @@ const UP_FORCE = -17; //bird jump intensity
 const NUM_PIPES = 3; //number of pipe objects
 const PIPE_SPEED = 8; //speed of pipes
 const PIPE_WIDTH = 2; //width of pipes
-const PIPE_SCREEN_WIDTH = 30; //pipe creation start position
+const PIPE_SCREEN_WIDTH = 37; //pipe creation start position
 const GAP = 5; //gap between top and bottom part of pipe
 
 var PIPE_Y_MOVE = 10; //horizontal distance between individual pipe objects
@@ -21,7 +21,7 @@ class Pipe extends GameObjectMove {
     constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true, wasd=false) {
         super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender);
         
-        //this.bird = null;
+        this.bird = null;
         this.setWrapAroundOff(); //prevents pipe from wrapping through the game grid
         this.setColor(0,153,0); //set pipe color to green
         this.setDirection(-1, 0); //set pipe direction to left
@@ -43,7 +43,7 @@ class Pipe extends GameObjectMove {
         
         /*Check for collision*/
         if(this.bird != null) {
-            if(this.checkSquareCollision(this.bird) != false) { this.gameOver(); }
+            if(this.checkSquareCollision(this.bird) !== false || this.bird.position.y >= HEIGHT || this.bird.position.y <= 0) { this.gameOver(); }
         }
         
         /*Move last pipe back to start position and change to random size*/
@@ -80,6 +80,7 @@ gameGrid.start = function() {
     var bird = gameGrid.createGameObject("bird", "Basic", x=bX, y=bY);
     
     bird.setColor(204,0,0); //set bird color to red
+    bird.setWrapAroundOff();
     bird.fallVector = new Vector(0,0);//Instantiate bird fall vector
 
     /*Function to set bird's continuous fall velocity*/
@@ -90,6 +91,8 @@ gameGrid.start = function() {
         }
         bird.position = bird.position.sum(bird.fallVector);
     }
+
+
     
     /*Function to make bird fly or "flap"*/
     bird.flap = function() {
