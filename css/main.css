@@ -58,9 +58,9 @@ header nav ul li {
 }
 .navBar{
 	float: center;
-	text-align:center;
+	text-align: center;
+	padding: 10px;
 }
-
 
 nav ul li {
 	display:inline;
