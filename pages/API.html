@@ -105,6 +105,48 @@
 				</p>
 				<img src="../images/api/gameGrid7.PNG" alt="" width="700">
 
+				<h2>GameObject methods</h2>
+
+				<p id="fullText">
+					Same as the gameGrid the gameObject have the folowing input methods and methods meant to be overriden. The only difference is that you must have an argument on some of these methods. When they are called the gameGrid passes itself as the first argument. That way you can access the gameGrid and other gameObjects inside the gameGrid. 
+				</p>
+				<img src="../images/api/go0.PNG" alt="" width="700">
+
+				<p id="fullText">
+					These methods are meant to turn on/off some gameObject behavior or to get gameObject data.
+				</p>
+				<img src="../images/api/go1.PNG" alt="" width="700">
+
+				<p id="fullText">
+					The gameObject at creation has a 1 unit square by default, but you can use these methods to add/remove/edit them. 
+				</p>
+				<img src="../images/api/go2.PNG" alt="" width="700">
+
+				<p >
+					Methods for changing the gameObject color.
+				</p>
+				<img src="../images/api/go3.PNG" alt="" width="500">
+
+				<p id="fullText">
+					You can use these methods to change your game object direction and position. The direction is a Vector that represents the direction that your gameObject is aiming to. The position is a Vector that represents its position in the screen X & Y plane.
+				</p>
+				<img src="../images/api/go4.PNG" alt="" width="700">
+
+				<p id="fullText">
+					You can use the screenCheck and check if a given Vector goes beyond the screen limit. When a gameObject goes past the screen it will call one of the 4 following screen methods. You can override them to create a game behavior.
+				</p>
+				<img src="../images/api/go5.PNG" alt="" width="700">
+
+				<p id="fullText">
+					A gameObject has the following methods to check for collision against Vectors and other gameObjects. Your gameObject uses its boundingBox to check collision. If you disable auto update boundingBox you can always call updateBoundingBox() to do so.
+				</p>
+				<img src="../images/api/go6.PNG" alt="" width="700">
+
+				<p id="fullText">
+					Finally a gameObject has a few methods to work with tiles. Please look at gameGrid tile methods for more information.
+				</p>
+				<img src="../images/api/go7.PNG" alt="" width="400">
+
 				<br>
 				<a href="API.html">BACK TO TOP</a> 
 				<br>
