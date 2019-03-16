@@ -27,9 +27,11 @@ body {
 
 header {
 	width: 100%;
+	height: auto;
 	margin: auto;
 	background-color:rgb(155, 155, 155);
 	min-height: 80px;
+	top: 0px;
 }
 
 header nav ul li {
