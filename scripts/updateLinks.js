@@ -28,9 +28,9 @@ function updateHeader(isIndex=false) {
 function updateFooter(isIndex=false){
 
     let linkNames = ["Github", "JQuery", "JQueryUI", "LW Tech"]
-    let imagePaths = ["../images/gitHub.png", "../images/jquery.jpg", "../images/jUI.png", "../images/lakeWash.gif"]
+    let imagePaths = ["../images/gitHub.png", "../images/jquery.png", "../images/jUI.png", "../images/lakeWash.png"]
     if(isIndex){
-        imagePaths = ["images/gitHub.png", "images/jquery.jpg", "images/jUI.png", "images/lakeWash.gif" ]
+        imagePaths = ["images/gitHub.png", "images/jquery.png", "images/jUI.png", "images/lakeWash.png" ]
     }
 
     $('section.clearFlt a').each( function(index)
