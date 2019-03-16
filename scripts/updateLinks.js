@@ -1,3 +1,7 @@
+/*
+This two functions are called after we load our header and footer html files with ajax.
+All they do is place the img element with the correct image path
+*/
 function updateHeader(isIndex=false) {
 
     let linkNames = ["Home", "Games", "API", "Tutorial", "About", "Contact"]
