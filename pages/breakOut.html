@@ -29,21 +29,54 @@
 
 		<div id="headerDiv"></div>
 
-		<div id="hero">
-            <div id="canvasDiv">
-				<div class="normal" id="mainBody">
-					<h2>Breakout</h2>
-					<canvas id="squareEngineCanvas" width="500" height="500"></canvas>
-					<p id="logger"></p>
-					<p id="info"></p>
-					<hr>
-					<div id="buttons">
-						<input type="button" value="START" id="start">
-						<input type="button" value="PAUSE" id="pause">
-						<input type="button" value="RESET" id="reset">
-					</div>
-				</div>
+		<div class="grid" id="hero">
+            
+
+            <div class="gameScreen" id="mainBody">
+                <h2>BreakOut</h2>
+                <div id="canvasDiv">
+                    <canvas id="squareEngineCanvas" width="500" height="500"></canvas>
+                    <p id="logger"></p>
+                </div>
+                <div id="buttons">
+                    <input type="button" value="START" id="start">
+                    <input type="button" value="PAUSE" id="pause">
+                    <input type="button" value="RESET" id="reset">
+                </div>
             </div>
+            <div class="rules" id="mainBody">
+                
+             
+                <div id="accordion">
+                    <h2>Game options:</h2>
+                                    
+                    <h3>Rules:</h3>
+                    <div>
+                        <p>
+                          Use the arrows keys to move the paddle along the bottom of the screen left and right.<br>
+						  Hit the ball with the paddle to break up the cubes at the top of the screen.
+						  If the ball passes your paddle you lose! <br>
+						  Win the game by breaking up all the cubes with the ball!
+                        </p>
+                    </div>
+
+                                   
+                    
+                    <h3>Keyboard inputs:</h3>
+                    <div>
+                        <p>
+                            <b>Enter: </b>start the game.<br>
+                            <b>Spacebar:</b> pause & unpause.<br>
+                            <b>R:</b> resets the game.<br>
+                            <b>Arrow key left:</b> move the paddle to the left.<br>
+                            <b>Arrow key right:</b> move the paddle to the right.<br>
+                        </p>
+                    </div>
+                                      
+                    
+                </div>
+            </div>
+            <div id="clearfix"></div>
 		</div>
 
 		<div id="footerDiv"></div>
@@ -53,6 +86,12 @@
 	
 
 </body>
+<script>
+$( function() {
+    $( "#accordion" ).accordion();
+    console.log("acord");
+} );
+</script>
 <script src="../games/breakOut.js"></script>
 
 </html>

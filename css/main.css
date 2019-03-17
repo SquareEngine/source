@@ -184,7 +184,7 @@ footer{
 }
 	
 	
-/*contact page styles*/
+/*contact page*/
 
 h2{
 	font-family: 'Poly', serif;
@@ -196,15 +196,7 @@ h4{
 	font-size:1.2em;
 }
 
-
-main section {
-	background-color: rgb(245,245,245);
-	display:inline-block; 
-	vertical-align:top;
-	padding:3em;
-	height:800px;	
-}
-
+/*
 main section.formSection {
 	width:45%;
 	display:inline-block;
@@ -221,56 +213,63 @@ main section#map {
 	width:42%;
 	position:absolute;
 }
+*/
+#mainBody.normal{
+	padding-left: 2em;
+	width:830px;
+	height:820px;
+	margin-top: 100px;
+	margin-bottom: 100px;
+	}
 
-#map{
-	text-align:center;
-	height:100px;
-	top:100px;
-}
 
+/*bold the letters*/
 fieldset.personal{
 	font-family: 'Poly', serif;
 	font-size:1em;
 	text-align:center;
 	font-weight: bold;
+	width:700px;
+	padding-left:4em;
+	/*margin-right:15px;*/
+	margin-left: 15px;
 }
 
+/*bold the personal info*/
 fieldset.personal legend{
 	font-family: 'Poly', serif;
 	font-size:1.5em;
 	text-align:left;
 	font-weight:bold;
 }
-
+/*
 fieldset legend{
 	font-family: 'Poly', serif;
 	font-size:1.5em;
    	text-align:left;
 	font-weight:bold;
-}
+}*/
 
+/*backgorung grey under the full name..*/
 fieldset.personal label{
 	font-family: 'Poly', serif;
 	font-size:1em;
 	background-color:rgb(245,245,245);
-	width:300px;
+	width:310px;
 	display:inline-block;
 	text-align:center;
+	padding-left:.1em;
 }
-
+/*white boxes*/
 fieldset.personal input{
 	font-family: 'Poly', serif;
 	font-size:1em;
 	background-color:white;
-	width:300px;
+	width:307px;
 	height:20px;
 	display:inline-block;
-	text-align:center;
-}
+	text-align:center;}
 
-fieldset label{
-	font-family: 'Poly', serif;
-}
 
 
 /*About page*/
@@ -363,3 +362,49 @@ main {
 	background-position: center;
 	background-repeat: no-repeat;
 }
+
+
+/*GAMES */
+
+#mainBody.gameScreen{
+	padding-left: 1em;
+	width:810px;
+	height:820px;
+}
+
+#mainBody.rules{
+	height:820px;
+}
+
+#accordion{
+	text-align: center;	
+	margin-top:100px;
+}
+
+#hero.grid {
+	margin-top: 100px;
+	margin-bottom: 100px;
+	margin-right: 150px;
+	margin-left: 80px;
+	padding-right:5em;
+}
+
+/*API*/
+#mainBody.api{
+	height:8300px;
+	width:810px;
+	}
+	
+/*about*/
+#mainBody.about{
+	height:500px;
+	width:810px;
+	}
+
+/*Games page*/
+#mainBody.tutorial{
+	height:4800px;
+	width:810px;
+}
+
+/*Tutorial Page*/	

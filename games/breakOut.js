@@ -9,12 +9,13 @@
  Seeting ball colision, counting points and game over. 
 */
 
+//gameGrid constants
 const CANVAS_SCALE = 26;
 const SPEED_UP = 1;
 
 var gameGrid = new GameGrid(30, 20, CANVAS_SCALE);
 
-//showing the points on game over
+//showing the points on game over screen
 gameGrid.gameOver = function(){
     gameGrid.print("Your points: " + gameGrid.points);
 }
@@ -35,7 +36,7 @@ $("input, select#mode").change( function(){ gameGrid._reset(); } );
 //start the game
 gameGrid.start = function(){
 
-    gameGrid._startText = ["BREAKOUT", "Enter: start", "Left arrow key: move left", "Right arrow key: move right"]
+    gameGrid._startText = ["Enter: start", "Left arrow key: move left", "Right arrow key: move right"]
 	
     var screenHorizontalHalf = parseInt(gameGrid.getWidth()/2);
     var paddleVerticalPosition = gameGrid.getHeight()-0.5;
@@ -147,6 +148,7 @@ gameGrid.start = function(){
         }
     }
 }
+
 //loop the game
 createGameLoop(gameGrid);
 
