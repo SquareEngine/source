@@ -401,10 +401,15 @@ main {
 	width:810px;
 	}
 
-/*Games page*/
+/*Tutorial Page*/
 #mainBody.tutorial{
 	height:4800px;
 	width:810px;
 }
 
-/*Tutorial Page*/	
+/*Games Page*/
+#mainBody.game{
+	height:600px;
+	width:810px;
+}
+	
