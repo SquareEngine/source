@@ -1,3 +1,7 @@
+/*
+This two functions are called after we load our header and footer html files with ajax.
+All they do is place the img element with the correct image path
+*/
 function updateHeader(isIndex=false) {
 
     let linkNames = ["Home", "Games", "API", "Tutorial", "About", "Contact"]
@@ -12,7 +16,7 @@ function updateHeader(isIndex=false) {
         pages = ["index.html", "pages/games.html", "pages/API.html", "pages/tutorial.html", "pages/about.html", "pages/contact.html"];
     }
 
-    $("div#logoDiv").append('<a href="' + logoLink + '" id="logoLink"></a>');
+    $("div.logoDiv").append('<a href="' + logoLink + '" id="logoLink"></a>');
     $("a#logoLink").append('<img src="' + logoPath +  '"  alt="Logo" width="40">');
     $('ul#pages li').each( function(index)
     {      
@@ -23,10 +27,10 @@ function updateHeader(isIndex=false) {
 
 function updateFooter(isIndex=false){
 
-    let linkNames = ["Facebook", "Instagram", "Twitter"]
-    let imagePaths = ["../images/face.png", "../images/insta.png", "../images/twitter.png"]
+    let linkNames = ["Github", "JQuery", "JQueryUI", "LW Tech"]
+    let imagePaths = ["../images/gitHub.png", "../images/jquery.png", "../images/jUI.png", "../images/lakeWash.png"]
     if(isIndex){
-        imagePaths = ["images/face.png", "images/insta.png", "images/twitter.png"]
+        imagePaths = ["images/gitHub.png", "images/jquery.png", "images/jUI.png", "images/lakeWash.png" ]
     }
 
     $('section.clearFlt a').each( function(index)
