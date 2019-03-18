@@ -63,7 +63,7 @@ function bannerLoop() {
                 document.getElementById("imgban2").style.opacity = "1";
                 bannerStatus = 2;
             }, 1000);
-            console.log(bannerStatus);
+            //console.log(bannerStatus);
         }
         if (bannerStatus === 2) {
             document.getElementById("imgban3").style.opacity = "0";
@@ -80,7 +80,7 @@ function bannerLoop() {
                 bannerStatus = 3;
             }, 1000);
 
-            console.log(bannerStatus);
+           // console.log(bannerStatus);
         }
         if (bannerStatus === 3) {
             document.getElementById("imgban1").style.opacity = "0";
@@ -97,6 +97,6 @@ function bannerLoop() {
                 bannerStatus = 1;
             }, 1000);
 
-            console.log(bannerStatus);
+            //console.log(bannerStatus);
         }
 }

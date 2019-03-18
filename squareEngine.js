@@ -56,12 +56,7 @@ class GameGrid{
         this._gameState = gameStateEnum.START;
 
         // tile attributes
-        this._tiles = [];
-        this._emptyTiles = [];
-        for(let i=0; i<this._area; i++){
-            this._tiles[i] = tileEnum.EMPTY;
-            this._emptyTiles[i] = i;
-        }
+        this._updateTileBoard();
     }
 
     _tick(){ // this method gets called about 60 times per second
@@ -145,14 +140,28 @@ class GameGrid{
         this._gameObjectsDict = {};
         this.debug = undefined;
         this._stepCounter = 0; // reset the step counter always
+        this._updateTileBoard();
+        this.reset(); // call custom reset
+        this._start(); // generate all game assets
+    }
+
+    _changeGameGridSize(width=10, height=10, canvasScale=20){
+        this._width = width;
+        this._height = height;
+        this._area = width * height;
+        this._moveUnits = canvasScale;
+        this._canvas.width = width * canvasScale;
+        this._canvas.height = height * canvasScale;
+        this._reset();
+    }
+
+    _updateTileBoard(){
         this._tiles = [];
         this._emptyTiles = [];
         for(let i=0; i<this._area; i++){
             this._tiles[i] = tileEnum.EMPTY;
             this._emptyTiles[i] = i;
         }
-        this.reset(); // call custom reset
-        this._start(); // generate all game assets
     }
 
     _render(){
@@ -994,8 +1003,6 @@ class Vector{
         this.y = parseInt(this.y);
     }
 }
-
-
 
 class BoundingBox{
     /* 
