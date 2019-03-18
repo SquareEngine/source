@@ -33,40 +33,39 @@
 		<div id="headerDiv"></div>
 
 		<div class="normal" id="mainBody">
-				<section class="formSection">
+			<section class="formSection">
 				<h2>Contact</h2>
 				<div id="aboutLogo">
 					<img src="../images/logo.png"   width="60">
 				</div>
 				<p><b>We're happy to answer any questions you have or provide you with an estimate.<br> Just send us a message in the form below with any questions you may have.</b></p>
 				<br>
-					<form action="../scripts/contact.php" method="post" id="contactForm"> 
-						<fieldset class="personal">
-						<legend>Personal Info</legend> 
+				<form action="../scripts/contact.php" method="post" id="contactForm"> 
+					<fieldset class="personal">
+					<legend>Personal Info</legend> 
+				
+					<label for="Name">Full Name:</label><br>
+					<input type="text" name="firstName" id="Name" placeholder="Required"> 
 					
-						<label for="Name">Full Name:</label><br>
-						<input type="text" name="firstName" id="Name" placeholder="Required"> 
+					<br><br>
+					<label for="email">Email:</label><br>
+					<input type="email" name="email" id="email" placeholder="email@example.com"> 
+					<br><br>
+					<label for="phone">Phone Number:</label><br>
+					<input type="tel" name="phone" id="phone" placeholder="555-555-5555" maxlength="10"> 				
+					</fieldset>
+									
 						
 						<br><br>
-						<label for="email">Email:</label><br>
-						<input type="email" name="email" id="email" placeholder="email@example.com"> 
-						<br><br>
-						<label for="phone">Phone Number:</label><br>
-						<input type="tel" name="phone" id="phone" placeholder="555-555-5555" maxlength="10"> 				
-						</fieldset>
-										
-							
-							<br><br>
-							<label for="comments"><h3>Comments</h3></label>				
-							<textarea name="comments" id="comments" cols="50" rows="10"></textarea>
-						<br>
-						<input type="submit" name="submit" id="submit" value="Send">
-						<input type="reset" value="Clear">
-						</fieldset>
-					</form>
-				</section>
+						<label for="comments"><h3>Comments</h3></label>				
+						<textarea name="comments" id="comments" cols="50" rows="10"></textarea>
+					<br>
+					<input type="submit" name="submit" id="submit" value="Send">
+					<input type="reset" value="Clear">
+					</fieldset>
+				</form>
+			</section>
 				
-		</div>
 		</div>
 
 		<div id="footerDiv"></div>
