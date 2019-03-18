@@ -277,22 +277,6 @@ fieldset.personal input{
 
 
 
-/*About page*/
-main {
-	background-color:rgba(245,245,245,1);
-}
-
-#parag {
-	font-family: 'Poly', serif;
-	font-size:1em;
-	height:340px;
-	width:900px;
-	text-align:left;
-	padding:3.5em;
-	margin:0 auto;
-	
-}
-
 /*Rotating Banner*/
 .main-banner {
 	margin: 0 auto;
@@ -402,7 +386,7 @@ main {
 	
 /*about*/
 #mainBody.about{
-	height:500px;
+	height:600px;
 	width:810px;
 	}
 
