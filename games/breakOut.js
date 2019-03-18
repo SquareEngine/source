@@ -20,7 +20,7 @@ const SPEED_UP = 1;
 //creating the grid of grid class (GameGrid)
 var gameGrid = new GameGrid(30, 20, CANVAS_SCALE);
 
-//showing the points on game over screen
+//showing the points on the game over screen
 gameGrid.gameOver = function(){
     gameGrid.print("Your points: " + gameGrid.points);
 }
@@ -46,7 +46,7 @@ gameGrid.start = function(){
 	
     var screenHorizontalHalf = parseInt(gameGrid.getWidth()/2);
     var paddleVerticalPosition = gameGrid.getHeight()-0.5;
-    gameGrid.setBackgroundColor(RGB.makeRandomColor()); //ramdom background color
+    gameGrid.setBackgroundColor(RGB.makeRandomColor()); //ramdom background color on the game grid
 
     //print the points on the screen
     gameGrid.points = 0; //starts with 0
@@ -64,9 +64,9 @@ gameGrid.start = function(){
     paddle.setWrapAroundOff();
     paddle.setHorizontal()
     paddle.setSpeed(15);//speed of the paddle
-    paddle.setColor(0,0,255);  //blue
+    paddle.setColor(0,0,255); //blue
 
-    paddle.getSquare().size.x = 5;
+    paddle.getSquare().size.x = 5; //size of the paddle
     paddle.updateBoundingBox();
     paddle.setAutoLimit();
 
@@ -78,7 +78,7 @@ gameGrid.start = function(){
     ball.botOffset += 1;
     ball.paddle = paddle;
 
-    //colission: touch bottom game over or touch the paddle bounce and return up.
+    //check colission: touch bottom game over or touch the paddle bounce and return up.
     ball.touchedBot = function(){
 
         let testPosition = this.getPosition().sum(new Vector(0, 1))
@@ -96,11 +96,11 @@ gameGrid.start = function(){
         
     }
 
-    //created the blocks
+    //create the blocks
     var xCount = 9;
     var yCount = 3;
 
-    // create random colors
+    //create random colors
     var rColor1 = RGB.makeRandomColor();
     var rColor2 = RGB.makeRandomColor();
     var rColor3 = RGB.makeRandomColor();
@@ -137,7 +137,7 @@ gameGrid.start = function(){
                     this.hide();
                     this.disableUpdate();
 					
-                    //calculating the points each time break a block
+                    //calculating the points each time that breaks a block (+1)
                     gameGrid.points += 1;
                     gameGrid.print("Your points: " + gameGrid.points);
 					
