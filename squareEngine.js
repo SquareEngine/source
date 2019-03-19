@@ -1,4 +1,15 @@
+/*
+Dimitri Frazao 
+Beni Ungur
+Tamires Boniolo
 
+Group project - CSD 122 Javascript & JQuery
+Winter 2019
+
+s-Dimitri.Frazao@lwtech.edu
+s-Beni.Ungur@lwtech.edu
+s-Tamires.Boniolo@lwtech.edu
+*/
 
 // simple enum to make it easier to interect with keycodes
 var keyCodesEnum = {ENTER:13, RESET:82, SPACE:32, LEFT:37, RIGHT:39, UP:38, DOWN:40, W:87, A:65, S:83, D:68}
@@ -18,6 +29,11 @@ Ex: _render() is called by the _tick() and hsould not be changed, but you can us
 
 to create a gameObject you should use the gameGrid.createGameObject() method.
 It will instanciate a new gameObject and place it inside the _gameObjects array.
+The gameGrid comes with 4 default gameObjects that you can use and build upon:
+"Basic" - the basic vanilla gameObject
+"Move" - same as basic but with extra code to move the gameObject with keyboard arrow keys
+"Paddle" - same as move but with extra code for limiting movement based on paddle size
+"Ball" - same as basic but with extra code to move ball and bounce against the screen edges
 
 params:
 width (int) the number of horizontal tiles
@@ -71,6 +87,13 @@ class GameGrid{
         this._emptyTiles = [];
         this._updateTileBoard();
     }
+
+    //##########################################################################################
+    //################################### internal methods #####################################
+    //##########################################################################################
+
+    // methods that starts with a "_" are not meant to be used and overriden.
+    // if you do so make sure you don't break the gameGrid core functionality
 
     // the tick() method is being called 60 times a second
     // when you call the createGameLoop() and pass a gameGrid
@@ -249,7 +272,7 @@ class GameGrid{
     _disableAllUpdates(){ for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._canUpdate=false; }
 
     //##########################################################################################
-    //################################# methods to override ####################################
+    //############################ methods to override and/or use ##############################
     //##########################################################################################
 
     /* these are the main method you will override to get your game behavior
@@ -448,6 +471,10 @@ class GameGrid{
     }
 
 }
+
+/*
+gameObject is our 
+*/
 
 class GameObject {
     /*

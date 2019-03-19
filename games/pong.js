@@ -1,3 +1,16 @@
+/*
+Dimitri Frazao 
+Beni Ungur
+Tamires Boniolo
+
+Group project - CSD 122 Javascript & JQuery
+Winter 2019
+
+s-Dimitri.Frazao@lwtech.edu
+s-Beni.Ungur@lwtech.edu
+s-Tamires.Boniolo@lwtech.edu
+*/
+
 // a simple PONG clone using the squareEngine 
 
 // first we set our constants
