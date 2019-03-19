@@ -44,18 +44,20 @@ gameGrid.start = function(){
 	//text on the screen before start to play
     gameGrid._startText = ["Enter: start", "Left arrow key: move left", "Right arrow key: move right"]
 	
+	//paddle position (half of the screen)
     var screenHorizontalHalf = parseInt(gameGrid.getWidth()/2);
     var paddleVerticalPosition = gameGrid.getHeight()-0.5;
+	
     gameGrid.setBackgroundColor(RGB.makeRandomColor()); //ramdom background color on the game grid
 
     //print the points on the screen
     gameGrid.points = 0; //starts with 0
     gameGrid.print("Your points: " + gameGrid.points);
 
-    //creating the bar under the paddle (createGameObject)
+    //creating the bar behind the paddle (createGameObject)
     var bar = gameGrid.createGameObject("bar", "Basic", x=screenHorizontalHalf, y=paddleVerticalPosition);
 	bar.setColor(120,120,120); //grey
-    bar.getSquare().size.x = gameGrid.getWidth();
+    bar.getSquare().size.x = gameGrid.getWidth(); //making the bar width of the screen.
 
     //creating the paddle object (createGameObject)
     var paddle = gameGrid.createGameObject("paddle", "Paddle", x=screenHorizontalHalf, y=paddleVerticalPosition);
@@ -127,7 +129,7 @@ gameGrid.start = function(){
                 block.pushSquare(square);
             }
 			
-			//check the colision on the sides of the screen. Bounce off the walls.
+			//check the colision on the blocks.
             block.ball = ball;
             block.update = function(gameGrid){
                 let col = this.checkCollision( this.ball );

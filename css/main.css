@@ -402,7 +402,7 @@ fieldset.personal input{
 
 #accordion .ui-accordion-header {
 	background-color: rgb(138, 138, 138);
-	color: rgb(73, 73, 73);
+	color: rgb(0,0,0);
 	margin: auto;
 	padding: 5px;
 }
