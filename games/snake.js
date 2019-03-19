@@ -36,26 +36,30 @@ directionEnum = {
 
 // JQuery events to handle our buttons/number inputs that affect the game
 
+// click event for start button to start gae
 $("#start").click( function(){ gameGrid._setGameToUpdate() });
+// click event for pause button to pause game
 $("#pause").click(
     function(){
         if(gameGrid._getGameState()==gameStateEnum.PAUSED) gameGrid._setGameToUpdate()
         else if(gameGrid._getGameState()==gameStateEnum.UPDATE) gameGrid._setGameToPaused()
     }
 );
+// click event for reset button to reset game
 $("#reset").click( function(){ gameGrid._reset(); });
+// change event for inputs to reset game
 $("input, select#mode").change( function(){ gameGrid._reset(); } );
-
+// change event for speed increment input to keep value limit
 $("input#sppedInc").change( function(){ 
     if($(this).val()<0) $(this).val(0);
     else if($(this).val()>10) $(this).val(10);
 });
-
+// change event for apples/obstacles increment input to keep value limit
 $("input#apples, input#obstacles").change( function(){ 
     if($(this).val()<0) $(this).val(0);
     else if($(this).val()>OBJECTS_MAX) $(this).val(OBJECTS_MAX);
 });
-
+// change event for screen units input to keep value limit and resize gameGrid
 $("input#units").change( function(){ 
 
     let unitValue = Number( $(this).val() );
@@ -73,6 +77,7 @@ this class is not meant to be initialized by the user. It must be addded to the 
 the gameGrid is the object that creates gameObjects.
 */
 class Snake extends GameObject{
+    // same constructor as gameObject. Please check gameObject class for more info
     constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true){
         super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender);
         // set our snake keyboard keys
@@ -83,25 +88,26 @@ class Snake extends GameObject{
             RIGHT:keyCodesEnum.RIGHT
             };
         // initialize our snake with its proper settings
+        // here we create a random color for our snake
         let randomValueR = Math.floor(Math.random()*51);    
         let randomValueG = Math.floor(Math.random()*101);
         let randomValueB = Math.floor(Math.random()*51);
-        this.setColor(randomValueR, 100 + randomValueG, randomValueB);
-        this.setSecondSquareOn(new RGB(randomValueR, 150 + randomValueG, randomValueB) );
-        this.setUpdateStep(SNAKE_MAX_SPEED);    
-        this.setWrapAroundOn();
-        this.setGridSnapOn();
-        this.setDirection(1,0);
-        this.disableAutoBB();
-        this.popSquare();
-        this.direction = directionEnum.RIGHT;
-        this.nextDirection = directionEnum.RIGHT;
-        this.headPos = new Vector(0,0);
-        this.isAlive = true;
-        this.snakeSpeedLerp = 0;
-        this.snakeSpeedInc = 0.05;
-        this.wrapSnake = true;
-        this.player = 1;
+        this.setColor(randomValueR, 100 + randomValueG, randomValueB); // sets color
+        this.setSecondSquareOn(new RGB(randomValueR, 150 + randomValueG, randomValueB) ); // sets second square to on
+        this.setUpdateStep(SNAKE_MAX_SPEED); // sets an update speed    
+        this.setWrapAroundOn(); // make snake wrap around by default
+        this.setGridSnapOn(); // grid aligned 
+        this.setDirection(1,0); // starting direction
+        this.disableAutoBB(); // no auto bounding box
+        this.popSquare(); // remove default square
+        this.direction = directionEnum.RIGHT; // sets our snake direction
+        this.nextDirection = directionEnum.RIGHT; // creates nextDirection attribute (vectot)
+        this.headPos = new Vector(0,0); // the position of our snake head square (vector)
+        this.isAlive = true; // bool for snake being alive or not
+        this.snakeSpeedLerp = 0; // snake speed lerp between min and max speed (float)
+        this.snakeSpeedInc = 0.05; // our snake speed increment value (float)
+        this.wrapSnake = true; // bool that determines if snake can wrap screen
+        this.player = 1; // int that determines if player 1 or player 2
     }
 
     // simple methods to set gameOver text
@@ -158,12 +164,12 @@ class Snake extends GameObject{
 
     // placing our snake head and tail squares in the tile array at start
     start(gameGrid){
-
+        // position tail square based on direction
         this.tailPos = this.headPos.sum(this.nextDirection.mul(-1));
-        
+        // add head and tail squares
         this.pushSquare(new Square( this.headPos ));
         this.pushSquare(new Square( this.tailPos ));
-
+        // ocupies game tiles with our head and tail squares
         gameGrid.ocupyTile(
             gameGrid.convertVectorToIndex(this.headPos), 
             tileEnum.SNAKE);
@@ -173,7 +179,7 @@ class Snake extends GameObject{
             tileEnum.SNAKE);
     }
 
-    // overwritting inputKeyDown virtual method to change snake direction with keyboard inputs
+    // overriding inputKeyDown virtual method to change snake direction with keyboard inputs
     inputKeyDown(keyCode){
         if(keyCode == this.keys.UP) this.nextDirection = new Vector(0,-1);
         else if(keyCode == this.keys.DOWN) this.nextDirection = new Vector(0,1);
@@ -181,7 +187,7 @@ class Snake extends GameObject{
         else if(keyCode == this.keys.RIGHT) this.nextDirection = new Vector(1,0);
     }
 
-    // overwritting our update method.
+    // overriding our update method.
     // here is where we update our snake body
     update(gameGrid){
 
@@ -267,6 +273,7 @@ This class must be added to our gameGrid factory. Do not initialize it in code.
 That has to be done by our gameGrid
 */
 class Apple extends GameObject{
+    // same constructor as gameObject. Please check gameObject class for more info
     constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true){
         super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender);
         // applpe basic settings
@@ -505,11 +512,14 @@ gameGrid.start = function(){
     if(isNaN(obstacleNum)==true) throw Error("Obstacles input must be a number between 1 and " + OBJECTS_MAX);
     if(obstacleNum<0) obstacleNum=0;
     else if(obstacleNum>OBJECTS_MAX) obstacleNum=OBJECTS_MAX;
-    // now create our obstacles
+    // now create our obstacles. lets loop through how many the user has defined
     for(let i=0; i<obstacleNum; i++){
+        // creates basic gameObject
         let obstacle = gameGrid.createGameObject("obstacle" + (i+1), "Basic");
+        // sets blue color with a small random variation
         let randomValue = Math.floor(Math.random()*51);
         obstacle.setColor(0,0,150 + randomValue);
+        // gets a random position in the tile board that is available
         let randomIndex = gameGrid.getRandomFreeTileIndex();
         while(gameGrid.convertIndexToVector(randomIndex).y == midV + 0.5){
             randomIndex = gameGrid.getRandomFreeTileIndex();
@@ -521,8 +531,10 @@ gameGrid.start = function(){
 
     // here we check our portal input and place them in the board if true
     if( $("input#portals").prop('checked') ){
+        // creates portal A
         let portalA = gameGrid.createGameObject("portalA", "Basic");
-        portalA.setColor(200,200,0);
+        portalA.setColor(200,200,0); // sets color
+        // gets free tile index and place portal there
         randomIndex = gameGrid.getRandomFreeTileIndex();
         while(gameGrid.convertIndexToVector(randomIndex).y == midV + 0.5){
             randomIndex = gameGrid.getRandomFreeTileIndex();
@@ -530,9 +542,10 @@ gameGrid.start = function(){
         gameGrid.ocupyTile(randomIndex, tileEnum.PORTAL);
         portalA.position = gameGrid.convertIndexToVector(randomIndex);
         gameGrid.portals.push(portalA);
-
+        // creates portal B
         let portalB = gameGrid.createGameObject("portalB", "Basic");
-        portalB.setColor(200,200,0);
+        portalB.setColor(200,200,0); // sets color
+        // gets free tile index and place portal there
         randomIndex = gameGrid.getRandomFreeTileIndex();
         while(gameGrid.convertIndexToVector(randomIndex).y == midV + 0.5){
             randomIndex = gameGrid.getRandomFreeTileIndex();
@@ -618,24 +631,7 @@ gameGrid.mouseClick = function(mousePos){
 // finally we start our game loop :)
 createGameLoop(gameGrid);
 
-/*
-Logic validation / test
 
-Since this project is a game it's very hard to perform logic validation/test other than playing.
-The game, as you see, if very complex and tuning the game was a very long series of tests.
-The game library itself is very flexible and it's up to the dev to use it properly.
-
-I have done the following tests:
-
-1 - HTML inputs all works correctly.
-2 - The JQuery input events and validation all works
-3 - Keyboard and mouse click works.
-4 - Game states and change of state all work properly and respond to the correct keys/clicks
-5 - Game logic works and so far no bugs found.
-
-I have tested this game throughly and can say it's all working as expected.
-
-*/
 
 // simple logic validation to test our main classes 
 // need to eventually change it to a better unit test 
@@ -684,3 +680,22 @@ function snakeLogicValidation()
     console.log("Snake game Logic validation successful!");
 
 }
+
+/*
+Logic validation / test
+
+Since this project is a game it's very hard to perform logic validation/test other than playing.
+The game, as you see, if very complex and tuning the game was a very long series of tests.
+The game library itself is very flexible and it's up to the dev to use it properly.
+
+I have done the following tests:
+
+1 - HTML inputs all works correctly.
+2 - The JQuery input events and validation all works
+3 - Keyboard and mouse click works.
+4 - Game states and change of state all work properly and respond to the correct keys/clicks
+5 - Game logic works and so far no bugs found.
+
+I have tested this game throughly and can say it's all working as expected.
+
+*/
