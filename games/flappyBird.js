@@ -25,6 +25,18 @@ const GAP = 5; //gap between top and bottom part of pipe
 var PIPE_Y_MOVE = 10; //horizontal distance between individual pipe objects
 var HIGH_SCORE = 0; //holds high score
 
+// JQuery events to handle start, pause, reset buttons
+
+$("#start").click( function(){ gameGrid._setGameToUpdate() });
+$("#pause").click(
+    function(){
+        if(gameGrid._getGameState()==gameStateEnum.PAUSED) gameGrid._setGameToUpdate()
+        else if(gameGrid._getGameState()==gameStateEnum.UPDATE) gameGrid._setGameToPaused()
+    }
+);
+$("#reset").click( function(){ gameGrid._reset(); });
+
+
 /*This class is for creating pipe objects that the flappy bird flies through*/
 class Pipe extends GameObjectMove {
     
