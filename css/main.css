@@ -278,6 +278,36 @@ fieldset.personal input{
 
 
 /*Rotating Banner*/
+
+#arrowLeft{
+	float: left;
+	background-color: rgb(110, 110, 110);
+	margin-top:  150px;
+}
+
+#arrowRight{
+	float: right;
+	background-color: rgb(110, 110, 110);
+	margin-top:  150px;
+}
+
+.banner{
+	margin: auto;
+	border-radius: 15px;
+	box-shadow: 10px 10px 5px rgb(90, 90, 90);
+
+}
+
+.banner img{
+	background-color: rgb(110, 110, 110);
+	padding: 15px;  
+    width:  600px; 
+    height: 300px; 
+    top:  0; 
+    left: 0 
+
+}
+
 .main-banner {
 	margin: 0 auto;
 	width: 700px;
