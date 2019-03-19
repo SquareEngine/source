@@ -69,7 +69,7 @@ gameGrid.start = function(){
     paddle.setColor(0,0,255); //blue
 
     paddle.getSquare().size.x = 5; //size of the paddle
-    paddle.updateBoundingBox();
+    paddle.updateBoundingBox(); //updating the Bounding box size to match the square
     paddle.setAutoLimit();
 
 
@@ -107,7 +107,7 @@ gameGrid.start = function(){
     var rColor2 = RGB.makeRandomColor();
     var rColor3 = RGB.makeRandomColor();
 	
-	//create the blocks grid
+	//create the blocks and placing verticaly and horizontaly, using a nested for loop
     for(let i =0; i<xCount; i++){
         for(let j =0; j<yCount; j++){
             // unique block name
@@ -122,7 +122,7 @@ gameGrid.start = function(){
             resultColor = RGB.lerpColor(resultColor, rColor3, j/yCount); // j/yCount returns a scalar (0to1) 
 
             block.setColorObject(resultColor); //ramdom color on blocks
-
+						
             for(let i=0; i<2; i++){
                 let square = new Square();
                 square.position.x = i-1;
