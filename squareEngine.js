@@ -917,6 +917,11 @@ class GameObjectMove extends GameObject{
     }
 }
 
+/*
+Just a simple gameObjectMove that has extra methods to make easy creating a game paddle.
+This object has limits so paddle wont go past screen limits.
+It also has methods to set it to be horizontal or vertical.
+*/
 class GameObjectPaddle extends GameObjectMove{
     constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true, wasd=false, vertical=true){
         super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender, wasd=wasd);
@@ -976,6 +981,11 @@ class GameObjectPaddle extends GameObjectMove{
     }
 }
 
+/*
+Just a game object with extra methods to create a simple ball object.
+A ball will keep moving and bounces back when touches a screen edge.
+It has methods to be overriden that are called when ball touches a screen edge
+*/
 class GameObjectBall extends GameObject {
     constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true){
         super(gameGrid=gameGrid, x=x, y=y, canUpdate=canUpdate, canRender=canRender);
@@ -1028,7 +1038,9 @@ class GameObjectBall extends GameObject {
     touchedRight(){return true;}
 }
 
-class KeyboardInterface{
+// not implemented yet!!!!
+
+/* class KeyboardInterface{
     constructor(gameObject){
         this.gameObject = gameObject
     }
@@ -1090,10 +1102,14 @@ class Directional extends KeyboardInterface{
         }
     }
 
-}
+} */
 
+/*
+2D Vector class to make it easier to do vector math.
+A vector has a X & Y attribute (float) 
+*/
 class Vector{
-    // simple vector class to represent x & y coordinates
+    
     constructor(x=0,y=0){
         if( isNaN(x) || isNaN(y) ) throw Error("Vector got a NaN");
         this.x = x;
@@ -1189,39 +1205,45 @@ class Vector{
     }
 }
 
+ /* 
+bounding box is just a faster way of detecting collision between 2 objects rather then chacking each square.
+a bounding box only works for aquare/rectangle objects.
+every gameObject has 1 by default. If you decide to use unique shapes then use checkCollisionSquare
+
+when a collision is checked the method returns a boundingBox representing the overlap between 2 BoundingBoxes
+*/
 class BoundingBox{
-    /* 
-    bounding box is just a faster way of detecting collision between 2 objects rather then chacking each square.
-    a bounding box only works for aquare/rectangle objects.
-    every gameObject has 1 by default. If you decide to use unique shapes then use checkCollisionSquare
-    */
+   
     constructor(position=new Vector(0,0), size = new Vector(1,1), gameObject=null){ 
         this.position = position; // relative position to our gameObject
         this.size = size; // size = ( width/x/horizontal , height/y/vertical )
         this.gameObject = gameObject;
     }
-
+    // sets the bounding box sixe. Takes 2 floats as arguments
     setSize(x=1,y=1){
         this.size.x = x;
         this.size.y = y;
         if(this.gameObject) this.gameObject.updateBoundingBox();
     }
-
+    // sets the bounding position. Takes 2 floats as arguments
     setPosition(x=0,y=0){
         this.position.x = x;
         this.position.y = y;
     }
-
+    // gets the bounding absolute world position (in the screen space) return vector object
     getWorldPosition(){ 
         if(this.gameObject) return this.position.sum( this.gameObject.position );
         else return this.getLocalPosition();
     }
+    //gets the bounding box local position (relative to its gameObject position) return vector object
     getLocalPosition(){ return this.position.copy();}
 
+    // gets the bounding box top left position. return vector object
     getTopLeft(world=true){ // position - (size vector / 2 )
         if(world==true) return this.getWorldPosition().sub( this.size.mul(0.5) );
         else return this.getLocalPosition().sub( this.size.mul(0.5) );
     }
+    // gets the bounding box bottom right position. returns vector object
     getBotRight(world=true){ // position + (size vector / 2)
         if(world==true) return this.getWorldPosition().sum( this.size.mul(0.5) );
         else return this.getLocalPosition().sum( this.size.mul(0.5) );
@@ -1266,6 +1288,7 @@ class BoundingBox{
         return false;
     }
 
+    // updates the bounding box to reset its size to encompass all squares of the gameObject
     updateBoundingBox(){
         if(! this.gameObject) return false;
 
@@ -1297,28 +1320,41 @@ class BoundingBox{
     }
 }
 
+/*
+This class is used to create/edit and render squares.
+gameObjects can hold 1 or more squares inside their square arrays. 
+A square inside an active gameObject will be rendered.
+
+Square inherits from boundingBox so it can use all its methdos and detect collision if needed
+*/
 class Square extends BoundingBox{
     constructor(position=new Vector(0,0), size=new Vector(1,1), gameObject=null, color=null){
         super(position=position, size=size, gameObject=gameObject);
         this._color = color;
     }
 
+    // sets this square color. By default is the gameObject color. Arguments 3 floats (rgb)
     setColor(r,g,b){this._color.setColor(r,g,b);}
-    
+    // sets a random color 
     setRandomColor(){
         let newColor = RGB.makeRandomColor();
         this._color.setColor(newColor.r, newColor.g, newColor.b);
     }
-
+    // renders the square
     render(){
         let position = this.getTopLeft();
         this.renderAt(position);
     }
-
+    // renders square at given position (Vector object)
     renderAt(position){
         this.drawSquare(position, this.size, this._color)
     }
-
+    /* draws the square
+    arguments:
+    position (vector object) the square top left absolute position
+    size (vector object) the square size (x is width and y is height)
+    color (RGB object) the square color
+    */
     drawSquare(position, size=new Vector(1,1), color=RGB.makeRandomColor() ){
         position = position.mul( this.gameObject._gameGrid._moveUnits );
         size = size.mul( this.gameObject._gameGrid._moveUnits );
@@ -1328,7 +1364,11 @@ class Square extends BoundingBox{
 
 }
 
+/*
+Our RGB color class to make set/get/edit color easier
+*/
 class RGB{
+    // arguments: 3 floats (r, g and b)
     constructor(r=0, g=0, b=0){
         this.r=0;
         this.g=0;
@@ -1336,6 +1376,7 @@ class RGB{
         this.setColor(r,g,b)
     }
 
+    // sets color with 3 floats (r,g and b)
     setColor(r,g,b){
         if(r>255) r = 255;
         else if (r<0)r=0;
@@ -1350,23 +1391,28 @@ class RGB{
         this.b = b;
     }
 
+    // converts this color to a string color. returns string
     colorString(){
         let rgbText = "rgb(" + this.r + "," + this.g + "," + this.b + ")";
         return rgbText;
     }
 
+    // sets a random rgb value to this color object
     randomColor(r=true, g=true, b=true){
         if(r==true) this.r = parseInt( Math.floor(Math.random() * 256) );
         if(g==true) this.g = parseInt( Math.floor(Math.random() * 256) );
         if(b==true) this.b = parseInt( Math.floor(Math.random() * 256) );
     }
 
+    // creates and returns an RGB object with a random color
     static makeRandomColor(){
         let newColor = new RGB()
         newColor.randomColor();
         return newColor;
     }
 
+    // lerps between 2 color objects.
+    // arguments: RGB object, RGB object, float
     static lerpColor(color1, color2, value){
         let returnColor = new RGB();
         returnColor.r = lerp(color1.r, color2.r, value); 
@@ -1390,19 +1436,21 @@ function lerp(start, end, value){
 /*
 At the end of your game code, you have to call this method and pass your newly create gameGrid to it.
 It passes the gameGrid tick() to be called 60 times a frame.
-It also passes the gameGrid keyboard methods into the event listeners
+It also passes the gameGrid keyboard and mouse methods into the event listeners
 */
 function createGameLoop(gameGrid){
 
+    // calls our start method once
     gameGrid._start();
 
+    // creates our animate callback
     var animate = window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     function(callback) { window.setTimeout(callback, 1000/60) }
 
+    // creates a step method that calls gameGrid tick and adds to our animate callback
     window.onload = function() {animate(step);};
-
     var step = function() {
         gameGrid._tick();
         animate(step);
@@ -1411,17 +1459,19 @@ function createGameLoop(gameGrid){
     // creates keyboard events and calls our gameGrid input methods
     document.addEventListener('keydown', function(event) {
         gameGrid._inputKeyDown(event.keyCode);
+        // this if is to prevent arrow keys to scroll screen
         if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
             event.preventDefault();
         }
-        //event.preventDefault();
 
     });
+    // same for key up
     document.addEventListener('keyup', function(event) {
         gameGrid._inputKeyUp(event.keyCode);
     });
-
+    // adding mouse event listener
     document.addEventListener("click", function (event) {
+        // here we do some math to get our mouse pos to be relative to our canvas screen
         let rect = gameGrid._canvas.getBoundingClientRect();
         var mousePos = new Vector(event.clientX - rect.left, event.clientY - rect.top)
         if(mousePos.x >=0 && mousePos.x <= gameGrid.getPixelWidth() &&
