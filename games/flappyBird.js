@@ -1,3 +1,12 @@
+/*
+Beni Ungur
+
+Group project - CSD 122 Javascript & JQuery
+Winter 2019
+
+s-Beni.Ungur@lwtech.edu
+*/
+
 // a simple Flappy Bird clone using the squareEngine 
 
 /*Constants*/

@@ -1,3 +1,16 @@
+/*
+Dimitri Frazao 
+Beni Ungur
+Tamires Boniolo
+
+Group project - CSD 122 Javascript & JQuery
+Winter 2019
+
+s-Dimitri.Frazao@lwtech.edu
+s-Beni.Ungur@lwtech.edu
+s-Tamires.Boniolo@lwtech.edu
+*/
+
 // simple enum to make it easier to interect with keycodes
 var keyCodesEnum = {ENTER:13, RESET:82, SPACE:32, LEFT:37, RIGHT:39, UP:38, DOWN:40, W:87, A:65, S:83, D:68}
 
@@ -16,29 +29,43 @@ Ex: _render() is called by the _tick() and hsould not be changed, but you can us
 
 to create a gameObject you should use the gameGrid.createGameObject() method.
 It will instanciate a new gameObject and place it inside the _gameObjects array.
+The gameGrid comes with 4 default gameObjects that you can use and build upon:
+"Basic" - the basic vanilla gameObject
+"Move" - same as basic but with extra code to move the gameObject with keyboard arrow keys
+"Paddle" - same as move but with extra code for limiting movement based on paddle size
+"Ball" - same as basic but with extra code to move ball and bounce against the screen edges
+
+params:
+width (int) the number of horizontal tiles
+height (int) the number of vertical tiles
+canvasScale (float) the number of pixels per tile 
 
 */
 class GameGrid{
     constructor(width=10, height=10, canvasScale=20){
 
-        this._width = width;
-        this._height = height;
-        this._area = width * height;
-        this._moveUnits = canvasScale;
-        this._gameObjects = [];
-        this._gameObjectsDict = {};
-        this.debug = undefined;
+        this._width = width; // our horizontal tile count
+        this._height = height; // our vertical tile count
+        this._area = width * height; // total number of tiles
+        this._moveUnits = canvasScale; // our pixel count per tile units
+        this._gameObjects = []; // our gameObject array. We can get a gameObject by index position
+        this._gameObjectsDict = {}; // our gameObject "dictionary"
+        this.debug = undefined; // this is just a gameObject used for debuging
 
+        // our factory holds all gameObjects classes that gameGrid can create.
+        // each factory entry is a string : class combination
         this._factoryClasses = {"Basic":GameObject, "Move":GameObjectMove, "Ball":GameObjectBall, "Paddle":GameObjectPaddle}
 
         this._backGroundColor = new RGB(150, 150, 150);
-
-        this._logger = document.getElementById("logger"); 
-
+        
+        // our canvas element used to draw our game screen and gameObjects
         this._canvas = document.getElementById("squareEngineCanvas"); 
         this._canvas.width = width * canvasScale;
         this._canvas.height = height * canvasScale;
         this._context = this._canvas.getContext('2d');
+
+        // our logger used to output HTML debug text
+        this._logger = document.getElementById("logger"); 
 
         // UI text
         this._startText = ["PRESS ENTER TO START"];
@@ -52,20 +79,33 @@ class GameGrid{
         this._stepCounter = 0;
         this._updateStep = 0;
         
-        // game states        
+        // our game current state     
         this._gameState = gameStateEnum.START;
 
         // tile attributes
+        this._tiles = [];
+        this._emptyTiles = [];
         this._updateTileBoard();
     }
 
-    _tick(){ // this method gets called about 60 times per second
-        // get delta time
+    //##########################################################################################
+    //################################### internal methods #####################################
+    //##########################################################################################
+
+    // methods that starts with a "_" are not meant to be used and overriden.
+    // if you do so make sure you don't break the gameGrid core functionality
+
+    // the tick() method is being called 60 times a second
+    // when you call the createGameLoop() and pass a gameGrid
+    // it calls the tick() of the given gameGrid
+    _tick(){ 
+        // here we compared the current time vs our previous time
+        // that elapsed time since our previous update is our delta time
         this._now = new Date().getTime();
         this._deltaTime = (this._now - this._lastUpdate)/1000; // milliseconds
         this._lastUpdate = this._now;
 
-        // a game simple state machine
+        // a simple game state machine
         switch(this._gameState){
             case(gameStateEnum.START): // our start static screen
                 this._startScreen();
@@ -88,7 +128,7 @@ class GameGrid{
     If you ever override the keyboard input methods make sure you have the keyCode input argument.
     Ex: someGameObject.inputKeyDown = function(keyCode){ some code...}
     */
-    _inputKeyDown(keyCode){
+    _inputKeyDown(keyCode){ 
         switch(keyCode){
             case(keyCodesEnum.SPACE):
                 if(this._gameState == gameStateEnum.PAUSED) this._setGameToUpdate();
@@ -114,6 +154,8 @@ class GameGrid{
         for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i].mouseClick(mousePos);
     }
 
+    // here's the gameGrod main update method
+    // inside we call our preUpdate, update and postupdate methods of gameGrid & all gameObjects
     _update(){
         // step counter can be used to make the game have stepped updates
         // set the stepCounter to 0 if you don't want stepped animation
@@ -129,11 +171,13 @@ class GameGrid{
             this.postUpdate()
             for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._postUpdate(this);
 
-            this._stepCounter = 0;
+            this._stepCounter = 0; // zero out our counter
         }
          
     }
 
+    // resets clears all gameObjetcs, sets everything to default and calls our start
+    // the start is what re creates our game
     _reset(){
         this._setGameToStart(); // we first set our game state to start screen
         this._gameObjects = [];
@@ -145,6 +189,13 @@ class GameGrid{
         this._start(); // generate all game assets
     }
 
+    /*
+    This method changes our gameGrid unit size and scale size
+    params:
+    width (int) the number of horizontal tiles
+    height (int) the number of vertical tiles
+    canvasScale (float) the number of pixels per tile 
+    */
     _changeGameGridSize(width=10, height=10, canvasScale=20){
         this._width = width;
         this._height = height;
@@ -155,6 +206,7 @@ class GameGrid{
         this._reset();
     }
 
+    // resets and updates our tile variables
     _updateTileBoard(){
         this._tiles = [];
         this._emptyTiles = [];
@@ -164,6 +216,7 @@ class GameGrid{
         }
     }
 
+    // our render method. Renders the background and all gameObjects
     _render(){
         this._renderBackground(); // render background
         this.render(); // override render
@@ -188,11 +241,13 @@ class GameGrid{
         return true;
     } 
 
+    // render backGround with one large colored square
     _renderBackground(){
         this._context.fillStyle = this._backGroundColor.colorString();
         this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
     }
 
+    // get and set game states
     _getGameState(){return this._gameState;}
     _setGameToStart(){this._gameState = gameStateEnum.START;}
     _setGameToUpdate(){this._gameState = gameStateEnum.UPDATE;}
@@ -202,6 +257,7 @@ class GameGrid{
         this._disableAllUpdates();
     }
 
+    // our start method used to build or rebuild a game
     _start(){ 
         this.start();
         for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._start(this); 
@@ -212,30 +268,52 @@ class GameGrid{
         this.postStart();
     }
 
+    // sets all our gameObjects to not update
     _disableAllUpdates(){ for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._canUpdate=false; }
 
     //##########################################################################################
-    //################################# methods to override ####################################
+    //############################ methods to override and/or use ##############################
     //##########################################################################################
 
-    start(){return true;}
-    postStart(){return true;}
+    /* these are the main method you will override to get your game behavior
+    You can redefine any of these methods
+    update() & start() are the most important.
+    start() is used to create your gameObjects
+    update() does the game logic
+    */
+    update(){return true;} // update game grid logic
     preUpdate(){return true;} // preUpdate stage if needed
     postUpdate(){return true;} // post update if needed
-    update(){return true;} // update game grid logic
-    render(){return true;} 
+    render(){return true;} // render method
+    reset(){return true;} // custom reset method called when game is reset
+    gameOver(){return true;}  // custom gameOver method called when game state is set to gameOver
+    start(){return true;} // our start up methods to build a game
+    postStart(){return true;} // a post start method
+    renderGameUI(){return true;} // render any UI text on game
+
+    /* these input methods can be overriden 
+    make sure you always give them a keyCode or mousePos argument.
+    these are called by the gameGrid event listener and always have 1 argument
+    */
+    inputKeyDown(keyCode){return true;}
+    inputKeyUp(keyCode){return true;}
+    mouseClick(mousePos){return true;}
+
+    // render the start screen
     renderStartUI(){
+        // here we are rendering our start gae text
         let moveUnits = this.getPixelHeight() / (this._startText.length+1);
         for(let i=0; i<this._startText.length; i++){
+            // method to render text on screen
             this.renderText( this._startText[i], 
                 null,
                 moveUnits*(i+1), 
                 40, 
                 new RGB(0,0,0));
         }
-        //this.renderText("PRESS ENTER TO START");
     }
-    renderGameUI(){return true;}
+    
+    // renders our gameOver text
     renderGameOverUI(){
         let moveUnits = this.getPixelHeight() / (this._gameOverText.length+1);
         for(let i=0; i<this._gameOverText.length; i++){
@@ -246,31 +324,36 @@ class GameGrid{
                 new RGB(0,0,0));
         }
     }
+    // renders our pause text
     renderPauseUI(){
         this.renderText("PAUSE");
     }
-    reset(){return true;} 
-    gameOver(){return true;} 
-
-    inputKeyDown(keyCode){return true;}
-    inputKeyUp(keyCode){return true;}
-    mouseClick(mousePos){return true;}
+    
 
     // use this method to get the delta time. Use the deltaTime to get smooth motion.
     // Ex: if you're moving an object by lets say X units on every update have it multiplied by deltaTime.
     getDeltaTime(){return this._deltaTime;}
 
     // you can use this method to add new gameObjects to the gameGrid
+    // arguments: gameObjectName (string) and gameObjectClass (new gameObject class)
     addToFactory(gameObjectName, gameObjectClass){
         this._factoryClasses[gameObjectName]=gameObjectClass;
     }
 
-    // creates and return a new gameObject. That gameObject is added to the gameGrid _gameObjects array
+    /* creates and return a new gameObject. That gameObject is added to the gameGrid _gameObjects array
+    arguments:
+    name (string) name of the gameObject
+    x and y (float) the gameObject starting position
+    canUpdate and canRender (bool) if gameObject updates and renders 
+    returns gameObject
+    */
     createGameObject(name, objectType, x=0, y=0, canUpdate=true, canRender=true){
+        // get class from factory
         let gameObjectClass = this._factoryClasses[objectType];
         if(gameObjectClass==undefined){
             throw new Error("Error: " + objectType + " is not a valid gameObject");
         }
+        // initialize a new gameObject
         let gameObject = new gameObjectClass(this, x, y, canUpdate, canRender);
         gameObject._name = name;
         this._gameObjects.push(gameObject);
@@ -278,6 +361,7 @@ class GameGrid{
         return gameObject;
     }
 
+    // given a gameObject name (string) returns that gameObject
     getGameObject(name){
         return this._gameObjectsDict[name];
     }
@@ -285,8 +369,10 @@ class GameGrid{
     // get width and height units
     getWidth(){return this._width;}
     getHeight(){return this._height;}
+    // get width & height in pixels
     getPixelWidth(){return this._width * this._moveUnits;}
     getPixelHeight(){return this._height * this._moveUnits;}
+    // get our move Units (how many pixels is needed to travel 1 cube unit)
     getMoveUnit(){return this._moveUnits;}
 
     // changes the game backGround color
@@ -299,12 +385,20 @@ class GameGrid{
     printAdd(text){this._logger.innerHTML += "<br>" + text;}
     erase(){this._logger.innerHTML = "";}
 
+    // sets an update step (delay) which is a float
     setUpdateStep(delay){
         if(delay<0) this._updateStep = 0;
-        else this._updateStep = delay;}
+        else this._updateStep = delay;
+    }
+    // gets current update step. Returns float
     getUpdateStep(){return this._updateStep;}
 
-    // renders a square at x & y positions with given size and color
+    /* renders a square at x & y positions with given size and color
+    arguments:
+    position & size (vector object) square position and size
+    color (RGB object) square color
+    scaleOffset (bool) if move scaled square to match position as center
+    */
     renderSquare(position=new Vector(0,0), size=new Vector(1,1), color=RGB.makeRandomColor(), scaleOffset=true){
         if(scaleOffset==true) position = position.sub( size.mul(0.5) );
         position = position.mul( this._moveUnits );
@@ -313,6 +407,14 @@ class GameGrid{
         this._context.fillRect( position.x, position.y, size.x, size.y);
     }
 
+    /*
+    method for rendering text on the screen
+    arguments:
+    text (string) the text to be rendered
+    positionX & positionY (float) top left position of where text will be rendered
+    size (float) text size
+    color (RGB object) text color
+    */
     renderText(text, positionX=null, positionY=null, size=40, color=new RGB(0,0,0)){
         if(positionX==null) positionX = (this.getPixelWidth()/2.0); //- ((text.length/2.0)*this._moveUnits);
         if(positionY==null) positionY = (this.getPixelHeight()/2.0); //- (size/2);
@@ -322,33 +424,45 @@ class GameGrid{
         this._context.fillText(text, positionX, positionY);
     }
 
-    // tile methods
+    /* these are tile methods used in conjuction with our tile and emptyTiles array
+    these methods make tile game behavior easier
+    The tile array is a list of what tileType is in that tile. 
+    Is either empty or what ever you define in the tileEnum.
+    The empty tile array is a list of all tiles that are set to empty
+    */
+
+    // gets a random tile index from our free tile array.
+    // returns int if available or null in array is empty
     getRandomFreeTileIndex(){
         let freeIndex = Math.floor( Math.random() * this._emptyTiles.length );
         return this._emptyTiles[freeIndex];
     }
+    // sets the tile at given index (int) to empty
     freeTile(index){
         this._tiles[ index ] = tileEnum.EMPTY;
         this._emptyTiles.push(index);
     }
-
+    // sets the tileType of given index (int) to tileType
     ocupyTile(index, tileType){
         this._tiles[ index ] = tileType;
         this.removeEmptyTile(index);
     }
-
+    // sets the tile at index (int) to the given tileType
     setTileType(index, tileType){ this._tiles[ index ] = tileType;}
+    // returns the tileTyle of given index (int)
     getTileType(index){return this._tiles[index];}
-
+    // removes empty tile of given index (int) from our empty tile array
     removeEmptyTile(index){
         let spliceIndex = this._emptyTiles.indexOf(index); 
         this._emptyTiles.splice(spliceIndex, 1);
     }
-
+    // convers a Vrctor position to a tile array index position
+    // returns int
     convertVectorToIndex(vector){ 
         return parseInt(vector.x) + (parseInt(vector.y) * this._width) ;
     }
-
+    // comverts a tile index position to a vector object
+    // returns Vector object
     convertIndexToVector(index){
         let returnVector = new Vector();
         returnVector.x = (index % this._width) + 0.5;
@@ -357,6 +471,10 @@ class GameGrid{
     }
 
 }
+
+/*
+gameObject is our 
+*/
 
 class GameObject {
     /*
@@ -1242,7 +1360,6 @@ function createGameLoop(gameGrid){
         if(mousePos.x >=0 && mousePos.x <= gameGrid.getPixelWidth() &&
         mousePos.y >= 0 && mousePos.y <= gameGrid.getPixelHeight()){
             gameGrid._mouseClick(mousePos);
-            //alert(mousePos.x + ',' + mousePos.y);
         }
         
     }, false);
