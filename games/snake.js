@@ -636,3 +636,51 @@ I have done the following tests:
 I have tested this game throughly and can say it's all working as expected.
 
 */
+
+// simple logic validation to test our main classes 
+// need to eventually change it to a better unit test 
+function snakeLogicValidation()
+{
+
+    // calls our squareEngine logic validation
+    logicValidation();
+
+    // test JQuery methods
+    try{
+        $("#reset").click();
+        $("#start").click();
+        $("#pause").click();
+        $("#pause").click();
+        
+        $("input, select#mode").change();
+        $("#start").click();
+
+        $("input#sppedInc").change();
+        $("#start").click();
+
+        $("input#apples, input#obstacles").change();
+        $("#start").click();
+
+        $("input#units").change();
+        $("#start").click();
+    }
+    catch(err){
+        throw new Error("Failed jquery test. Error: " + err.message);
+    }
+
+    // test creating our custom gameObjects Snake and Apple
+    let gameObjectNames = ["Snake", "Apple"];
+    let gameObjects = [Snake, Apple];
+    try{
+        for(let i=0; i< gameObjects.lengthl; i++){
+            let aGameObject = new gameObjects[i](null);
+        }
+    }
+    catch(err){
+        throw new Error("Failed to create a new GameObject. Error: " + gameObjectNames[i]);
+    }
+
+    // all works!
+    console.log("Snake game Logic validation successful!");
+
+}

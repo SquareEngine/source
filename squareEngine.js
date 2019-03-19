@@ -151,7 +151,7 @@ class GameGrid{
 
     _mouseClick(mousePos){
         this.mouseClick(mousePos);
-        for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i].mouseClick(mousePos);
+        for(let i=0; i<this._gameObjects.length; i++) this._gameObjects[i]._mouseClick(mousePos);
     }
 
     // here's the gameGrod main update method
@@ -473,123 +473,197 @@ class GameGrid{
 }
 
 /*
-gameObject is our 
+gameObject is our main class for creating interactible squares in our game.
+This class has many methods similar to gameGrid plus extra methods to make it easy creating game behaviors.
+
+every gameObject has:
+1 - position, which is a Vector object that represents it's position inthe X & Y coordinates
+2 - direction, which is a Vector object that represents the gameObject aiming direction
+3 - _squareArray, which is an array of Square objects that this gameObject contains. By default every gameObject has 1 square.
+4 - a boundingBox object that represents the gameObject boundingBox. This object is used to detect collision.
+
+Besides these more important attributes mentioned, a gameObject has many more that can be used/modified to achieve a specific game behavior.
+
+a gameObject class is never meant to be created/initialized in code.
+You have to add it to the gameGrid object, which takes care of properly creating and maintaining the gameObject
+
 */
 
 class GameObject {
     /*
-    our base class for gameObjects.
-    It shares many methods with gameGrid such as update(), render(), inputKeyUp & inputKeyDown().
-    gameGrid loops through all of its gameObject and call these methods during render & update.
+    arguments:
+
+    gameGrid (gameGrid object) the gameGrid passes itself as this argument at creation.
+    That way the gameObject can interact with the gameGrid in its methods.
+
+    x and y (float) the gameObject starting position
+    canUpdate and canRender (bool) if gameObject updates and renders 
     */
     constructor(gameGrid, x=0, y=0, canUpdate=true, canRender=true){
         // this attributes can be used/changed
-        this._name
-        this.position = new Vector(x,y); 
-        this.prevPosition = new Vector(0,0);
-        this.direction = new Vector(0,0);
+        this.position = new Vector(x,y); // our gameObject x & y position as a Vector object
+        this.prevPosition = new Vector(0,0); // our gameObject x & y previous position as a Vector object
+        this.direction = new Vector(0,0); // our gameObject x & y direction as a Vector object
 
-        // do not access or override these. Use methods below
-        this._canUpdate = canUpdate;
-        this._canRender = canRender;
-        this._squareArray = [];
-        this._color = new RGB(255, 0, 0); 
-        this._wrapAround = true;
-        this._gridSnap = false;
-        this._gameGrid = gameGrid;
-        this._canMove = true;
-        this._speed = 1.0;
-        this._updateStep = 0;
-        this._stepCounter = 0;
-        this._bb = new BoundingBox(new Vector(0,0), new Vector(1,1), this);
-        this._autoBB = true;
+        // do not access or override these. Use methods below to change this attributes
+        this._name // our gameObjet name (string)
+        this._canUpdate = canUpdate; // our gameObject update on/off switch (bool)
+        this._canRender = canRender; // our gameObject render on/off switch (bool)
+        this._squareArray = []; // our gameObject array of Square objects to render
+        this._color = new RGB(255, 0, 0); // our gameObject main color (RGB object)
+        this._wrapAround = true; // enables our gameObject to wrap around the screen like a pacman game (bool)
+        this._gridSnap = false; // snapes our game to our gameGrid tile board (bool)
+        this._gameGrid = gameGrid; // the gameGrid reference (gameGrid object)
+        this._canMove = true; // enable sour gameObject to move (bool)
+        this._speed = 1.0; // our gameObject move speed (float)
+        this._updateStep = 0; // our game object update step (float)
+        this._stepCounter = 0; // counts the elapsed time if _updateStep is used 
+        this._bb = new BoundingBox(new Vector(0,0), new Vector(1,1), this); // our gameObject boundingBox (BoundingBox object)
+        this._autoBB = true; // enables our gameObject to auto update its bounding baox when you add/remove/edit its square (bool)
 
-        this._secondSquare = false;
-        this._secondColor = null;
-        this._secondSize = null;
+        // attributes to render a second square by default.
+        // if enabled then a second square will be render for each square in the square array.
+        // this second square iwll have a color and size defined here
+        this._secondSquare = false; // enables second square (bool)
+        this._secondColor = null; // second square color (RGB object)
+        this._secondSize = null; // second square size (Vector Object)
 
+        // adding it's 1 unit default square
         this.pushSquare( new Square() );
     }
 
+    //##########################################################################################
+    //################################### internal methods #####################################
+    //##########################################################################################
+
+    // these methods are not meant to be overriden.
+    // they take care of our gameObject internal mechanism for input, update, render, etc.
+
+    // our preupdate method calle dby gameGrid
     _preUpdate(gameGrid){ if(this._canUpdate == true) this.preUpdate(gameGrid); }
+    // our update method
     _update(gameGrid){
+        // check is gameObject update is enabled
         if(this._canUpdate == true) {
+            // adds elapsed time (delta time) to our counter 
+            // and check if counter is equal or greater than our updateStep
             this._stepCounter += gameGrid.getDeltaTime();
             if(this._stepCounter >= this._updateStep){
+                // if gameObject can move is ebaled then call move()
                 if(this._canMove==true) this.move();
+                // call our update() and zero out counter
                 this.update(gameGrid); 
                 this._stepCounter = 0; 
             }
         }
     }
+    // calls our postUpdate() method
     _postUpdate(gameGrid){ if(this._canUpdate == true) this.postUpdate(gameGrid); }
 
+    // gameObject main render method. Here's where we render our squares
     _render(gameGrid){ 
+        // check if gameObject can render
         if(this._canRender == true){
+            // calls our custom render method
             this.render(gameGrid); 
             // render square arrays
             for(let i=0; i<this._squareArray.length; i++){
 
                 let square = this._squareArray[i];
                 square.render();
+                // renders second square if that option is enabled
                 if(this._secondSquare){
                     let squarePosition = square.getTopLeft().sum(this._secondSize.mul(0.5));
                     square.drawSquare(squarePosition, this._secondSize, this._secondColor);
                 }
             }
+            // calls post render method
             this.postRender(gameGrid); 
         } 
     }
     // method that gets called right before the game starts
     _start(gameGrid){
-        if(this._autoBB) this.updateBoundingBox(); // first thing is to generate a bounding box
+        // if auto genarate BB is enabled then we update the bounding box
+        if(this._autoBB) this.updateBoundingBox(); 
+        // calls start method 
         this.start(gameGrid);
+        // if snap Grid snaps at start
         if(this._gridSnap==true){
             this.position.x = parseInt(this.position.x) + 0.5;
             this.position.y = parseInt(this.position.y) + 0.5;
         }
     }
 
+    // these are the input methods that is called by the gameGrid
+    // if an input event is triggered the gameGrid will call these and pass the input
+    // do not override these. use the input methods without the "_"
     _inputKeyDown(keyCode){this.inputKeyDown(keyCode);}
     _inputKeyUp(keyCode){this.inputKeyUp(keyCode);}
+    _mouseClick(mousePos){this.mouseClick(mousePos);}
 
     //##########################################################################################
     //################################# methods to override ####################################
     //##########################################################################################
 
-    getName(){return this._name;}
-    hide(){this._canRender=false;}
-    show(){this._canRender=true;}
-    enableUpdate(){this._canUpdate=true;}
-    disableUpdate(){this._canUpdate=false;}
-    enableAutoBB(){this._autoBB=true;}
-    disableAutoBB(){this._autoBB=false;}
-    setWrapAroundOn(){this._wrapAround=true;}
-    setWrapAroundOff(){this._wrapAround=false;}
-    setMoveOn(){this._canMove=true;}
-    setMoveOff(){this._canMove=false;}
+    /* these methods are meant to be used/overriden to define the gameObject behavior.
+    Some of them just changes the gameObject internal attributes.
+    Others are meants to be redefined so that our gameObjects can have a game behavior
+    */
+
+    // same as gameGrid. You can override these methods.
+    // when overriding these methods dont forget to pass a gameGrid input
+    preUpdate(gameGrid){return true}; 
+    update(gameGrid){return true;}
+    postUpdate(gameGrid){return true;} 
+    render(gameGrid){return true;}
+    postRender(gameGrid){return true;}
+    start(gameGrid){return true;}
+   
+    // input methods to be overriden. same as gameGrid 
+    // dont forget to have the input argument when redefining 
+    inputKeyDown(keyCode){return true;}
+    inputKeyUp(keyCode){return true;}
+    mouseClick(mousePos){return true;}
+
+
+
+    getName(){return this._name;} // returns this gameobject name (string)
+    hide(){this._canRender=false;} // disabled gameObject rendering
+    show(){this._canRender=true;} // enables gameObject rendering
+    enableUpdate(){this._canUpdate=true;} // enables gameObject update
+    disableUpdate(){this._canUpdate=false;} // disables gameObject update
+    enableAutoBB(){this._autoBB=true;} // enables gameObject bounding box auto update
+    disableAutoBB(){this._autoBB=false;} // disables gameObject bounding box auto update
+    setWrapAroundOn(){this._wrapAround=true;} // enables gameObject to wrap around the screen edges
+    setWrapAroundOff(){this._wrapAround=false;} // disables gameObject to wrap around the screen edges
+    setMoveOn(){this._canMove=true;}  // enables gameObject to move. Move method is calle dduring update 
+    setMoveOff(){this._canMove=false;} // disables gameObject to move. Move method is calle dduring update 
+    // enables or disable grid snap
+    // good to use with tile games
     setGridSnapOn(){this._gridSnap=true;}
     setGridSnapOff(){this._gridSnap=false;}
+    // given a float updateStep makes the update delay 
     setUpdateStep(updateStep){
         if(updateStep<0) this._updateStep=0;
         else this._updateStep=updateStep;}
     getUpdateStep(){return this.updateStep;}
-
+    // sets and gets the gameObject speed
     setSpeed(speed){this._speed=parseFloat(speed);}
     getSpeed(){return this._speed;}
-    setDirection(x,y){this.direction = new Vector(x,y);}
 
-    gameOver(){this._gameGrid._setGameToOver()};
-    resetGame(){this._gameGrid._reset()};
-    pauseGame(){this._gameGrid._setGameToPaused()}
+    
+    gameOver(){this._gameGrid._setGameToOver()}; // sets game to gameOver
+    resetGame(){this._gameGrid._reset()}; // resets game
+    pauseGame(){this._gameGrid._setGameToPaused()} // pauses game
 
-    pushSquare(square){ // pushes a square to your squareArray
+    // methods for adding/editing squares on our gameObject
+    pushSquare(square){ // pushes a square to your squareArray (Square object)
         square.gameObject = this;
         if(square._color==null) square._color = this._color;
         this._squareArray.push(square);
         if(this._autoBB==true) this.updateBoundingBox();
     }
-    insertSquare(square, index=0){
+    insertSquare(square, index=0){ // inserts square object at squareArray at given index (float)
         square.gameObject = this;
         if(square._color==null) square._color = this._color;
         this._squareArray.splice( index, 0, square);
@@ -624,31 +698,34 @@ class GameObject {
         this._secondSize = null;
     }
 
-    // when overriding these methods dont forget to pass a gameGrid input
-    preUpdate(gameGrid){return true}; 
-    update(gameGrid){return true;}
-    postUpdate(gameGrid){return true;} 
-    render(gameGrid){return true;}
-    postRender(gameGrid){return true;}
-    start(gameGrid){return true;}
-   
-    inputKeyDown(keyCode){return true;}
-    inputKeyUp(keyCode){return true;}
-    mouseClick(mousePos){return true;}
-
+    // sets our gameObject color. Arguments are 3 floats (r,g and b)
     setColor(r=150, g=150, b=150){
         this._color.setColor(r,g,b);
         for(let i=0; i<this._squareArray.length; i++){
             this._squareArray[i]._color = this._color;
         }
     }
+    // sets our gameObject color but argument is an RGB object
     setColorObject(rgbObject){this._color.setColor(rgbObject.r, rgbObject.g, rgbObject.b);}
 
+    // sets our gameObject color with a random color
     setRandomColor(){
         let newColor = RGB.makeRandomColor();
         this._color.setColor(newColor.r, newColor.g, newColor.b);
     }
     
+    // methods for setting/getting the gameObject direction 
+    setDirection(x,y){this.direction = new Vector(x,y);}
+    getDirection(){ 
+        if(this._gridSnap==true){
+            return this.direction.copy();
+        }
+        else{
+            let nextPosition = this.direction.normalized();
+            return nextPosition.mul( this._gameGrid.getDeltaTime() * this._speed);
+        }
+        
+    }
     setRandomDirection(len=1, normalize=true){
         // randomly generates diagonal directions
         // len will be the length of the X & Y values. That can make the ball move faster
@@ -674,6 +751,7 @@ class GameObject {
             this.direction.normalize();
         }
     }
+
     setRandomPosition(){
         let randomX = Math.floor(Math.random() * this._gameGrid._width);
         let randomY = Math.floor(Math.random() * this._gameGrid._height);
@@ -688,17 +766,6 @@ class GameObject {
     getPosition(){return this.position.copy();}
     getPrevPosition(){return this.prevPosition.copy();}
     getNextPosition(){return this.position.sum(this.direction);}
-
-    getDirection(){ 
-        if(this._gridSnap==true){
-            return this.direction.copy();
-        }
-        else{
-            let nextPosition = this.direction.normalized();
-            return nextPosition.mul( this._gameGrid.getDeltaTime() * this._speed);
-        }
-        
-    }
 
     move(){ this.moveTo( this.getDirection() ); }
 
@@ -1364,4 +1431,47 @@ function createGameLoop(gameGrid){
         
     }, false);
     
+}
+
+// simple logic validation to test our main classes 
+// need to eventually change it to a better unit test 
+function logicValidation()
+{
+
+    // test creating a gameGrid object
+    try{
+        let aGameGrid = new GameGrid();
+    }
+    catch(err){
+        throw new Error("Failed to create a new GameGrid. Error: " + err.message);
+    }
+
+    // test creating our default gameObjects
+    let gameObjectNames = ["Basic", "Move", "Paddle", "Ball"];
+    let gameObjects = [GameObject, GameObjectMove, GameObjectPaddle, GameObjectBall];
+    try{
+        for(let i=0; i< gameObjects.lengthl; i++){
+            let aGameObject = new gameObjects[i](null);
+        }
+    }
+    catch(err){
+        throw new Error("Failed to create a new GameObject. Error: " + gameObjectNames[i]);
+    }
+
+    // test creating our convinience classes
+    let classNames = ["Vector", "Square", "BoundingBox", "Color"];
+    let testClasses = [Vector, Square, BoundingBox, RGB];
+
+    try{
+        for(let i=0; i< testClasses.lengthl; i++){
+            let testClass = new testClasses[i]();
+        }
+    }
+    catch(err){
+        throw new Error("Failed to create the following object: " + classNames[i]);
+    }
+
+    // all works!
+    console.log("Square engine logic validation successful!");
+
 }
