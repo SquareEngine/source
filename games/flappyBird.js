@@ -4,7 +4,7 @@ Beni Ungur
 Group project - CSD 122 Javascript & JQuery
 Winter 2019
 
-s-Beni.Ungur@lwtech.edu
+s-Beniamin.Ungur@lwtech.edu
 */
 
 // a simple Flappy Bird clone using the squareEngine 
@@ -23,6 +23,19 @@ const PIPE_SCREEN_WIDTH = 37; //pipe creation start position
 const GAP = 5; //gap between top and bottom part of pipe
 
 var PIPE_Y_MOVE = 10; //horizontal distance between individual pipe objects
+var HIGH_SCORE = 0; //holds high score
+
+// JQuery events to handle start, pause, reset buttons
+
+$("#start").click( function(){ gameGrid._setGameToUpdate() });
+$("#pause").click(
+    function(){
+        if(gameGrid._getGameState()==gameStateEnum.PAUSED) gameGrid._setGameToUpdate()
+        else if(gameGrid._getGameState()==gameStateEnum.UPDATE) gameGrid._setGameToPaused()
+    }
+);
+$("#reset").click( function(){ gameGrid._reset(); });
+
 
 /*This class is for creating pipe objects that the flappy bird flies through*/
 class Pipe extends GameObjectMove {
@@ -63,9 +76,13 @@ class Pipe extends GameObjectMove {
             yPosition += PIPE_Y_MOVE * randomValue;
             this.position = new Vector(PIPE_SCREEN_WIDTH, yPosition);
             gameGrid.points += 1; //add point to score every time pipe reaches the end
-            gameGrid.print("Score : " + gameGrid.points);
+            gameGrid.print("Score : " + gameGrid.points); //Display new score
+            //Compare current score with high score, if greater new high score is displayed
+            if(gameGrid.points > HIGH_SCORE) {
+                HIGH_SCORE = gameGrid.points;
+            }
         }
-        
+
     }//end gameGrid update
     
 }//end Pipe class
@@ -81,6 +98,7 @@ gameGrid.start = function() {
     gameGrid.setBackgroundColor(new RGB(0,104,204));
     gameGrid.points = 0;
     gameGrid.print("Score : " + gameGrid.points);
+    document.getElementById("info").innerHTML = "High Score: " + HIGH_SCORE; //Display high score
     gameGrid.addToFactory("Pipe", Pipe); //add pipe game object to game grid
     
     var bX = 4, bY = HEIGHT/2; //bird starting coordinates variables
@@ -128,7 +146,6 @@ gameGrid.start = function() {
         let pipe = gameGrid.createGameObject("pipe" + (i+1), "Pipe", x=pipePositionX, y=-GAP/2);
         pipe.bird = bird;
     }
-    
 }//end of gameGrid start function
 
 /*function to start or restart game*/
@@ -151,5 +168,3 @@ gameGrid.inputKeyDown = function(keyCode) {
 }
 
 createGameLoop(gameGrid); //run the game loop
-
-document.getElementById("info").innerHTML = "Use SPACE to pause game. \nUse 'R' to restart.";
