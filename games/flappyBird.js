@@ -168,3 +168,41 @@ gameGrid.inputKeyDown = function(keyCode) {
 }
 
 createGameLoop(gameGrid); //run the game loop
+
+/*
+Logic validation / test
+
+The following validation logic is done by hand:
+
+1 - HTML inputs all working correctly.
+2 - The JQuery input events and validation all works
+3 - Keyboard and mouse click works.
+4 - Game states and change of state all work properly and respond to the correct keys/clicks
+5 - Game logic works and so far no bugs found.
+
+The game works as intended.
+
+*/
+
+// validation logic to test HTML buttons
+function buttonsLogicValidation()
+{
+
+    // calls our squareEngine logic validation
+    logicValidation();
+
+    // test JQuery methods
+    try{
+        $("#reset").click();
+        $("#start").click();
+        $("#pause").click();
+        $("#pause").click();
+
+    }
+    catch(err){
+        throw new Error("Failed jquery test. Error: " + err.message);
+    }
+    // all works!
+    console.log("Button validation successful!");
+
+}
