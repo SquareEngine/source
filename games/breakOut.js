@@ -44,18 +44,20 @@ gameGrid.start = function(){
 	//text on the screen before start to play
     gameGrid._startText = ["Enter: start", "Left arrow key: move left", "Right arrow key: move right"]
 	
+	//paddle position (half of the screen)
     var screenHorizontalHalf = parseInt(gameGrid.getWidth()/2);
     var paddleVerticalPosition = gameGrid.getHeight()-0.5;
+	
     gameGrid.setBackgroundColor(RGB.makeRandomColor()); //ramdom background color on the game grid
 
     //print the points on the screen
     gameGrid.points = 0; //starts with 0
     gameGrid.print("Your points: " + gameGrid.points);
 
-    //creating the bar under the paddle (createGameObject)
+    //creating the bar behind the paddle (createGameObject)
     var bar = gameGrid.createGameObject("bar", "Basic", x=screenHorizontalHalf, y=paddleVerticalPosition);
 	bar.setColor(120,120,120); //grey
-    bar.getSquare().size.x = gameGrid.getWidth();
+    bar.getSquare().size.x = gameGrid.getWidth(); //making the bar width of the screen.
 
     //creating the paddle object (createGameObject)
     var paddle = gameGrid.createGameObject("paddle", "Paddle", x=screenHorizontalHalf, y=paddleVerticalPosition);
@@ -67,7 +69,7 @@ gameGrid.start = function(){
     paddle.setColor(0,0,255); //blue
 
     paddle.getSquare().size.x = 5; //size of the paddle
-    paddle.updateBoundingBox();
+    paddle.updateBoundingBox(); //updating the Bounding box size to match the square
     paddle.setAutoLimit();
 
 
@@ -105,7 +107,7 @@ gameGrid.start = function(){
     var rColor2 = RGB.makeRandomColor();
     var rColor3 = RGB.makeRandomColor();
 	
-	//create the blocks grid
+	//create the blocks and placing verticaly and horizontaly, using a nested for loop
     for(let i =0; i<xCount; i++){
         for(let j =0; j<yCount; j++){
             // unique block name
@@ -120,14 +122,14 @@ gameGrid.start = function(){
             resultColor = RGB.lerpColor(resultColor, rColor3, j/yCount); // j/yCount returns a scalar (0to1) 
 
             block.setColorObject(resultColor); //ramdom color on blocks
-
+						
             for(let i=0; i<2; i++){
                 let square = new Square();
                 square.position.x = i-1;
                 block.pushSquare(square);
             }
 			
-			//check the colision on the sides of the screen. Bounce off the walls.
+			//check the colision on the blocks.
             block.ball = ball;
             block.update = function(gameGrid){
                 let col = this.checkCollision( this.ball );
