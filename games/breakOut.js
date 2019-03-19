@@ -161,23 +161,20 @@ createGameLoop(gameGrid);
 
 /** Validation Logic:
 
- 1. I clicked on the space bar on the start screen of the game. It paused the game without started and I clicked again and the game started with the space bar.
+ 1. I clicked on every option o n the keyboard (letters, numbers) on each screen of the game. And, it just worked and it was the right input. Result:confirmed!
  
- 2. I entered letters and numbers before start the game, the while the game was on and on the game over screen. Nothing happened. Result:confirmed!
+ 2. I tested all the buttons and keyboard input on every screen of the game. Result:confirmed!
  
- 3. When the game was paused I clicked on the enter tab and nothing happended. Then I clicked on the space bar and the game started again.
+ 3. When the player breaks all the blocks, it shows a Game over alert and the option to reset the game. Result:confirmed!
  
- 4. When the player breaks all the blocks, the game don't show any alert that you won, it shows Game over alert.
+ 5. When shows the game over screen, you still can click on "start" button and on the "enter and space key", and it will change from game over alert to nothing and if you click on "pause" button or space key it will show the pause screen. If you keep to pressing the start button or enter key and pause button or space bar, it will make the alert "pause" go away and back. But when you click on "reset" button or R key it resets the game. 
  
- 5. The game was on "game over" screen and I clicked the space bar, and the game paused it. And I clicked the space bar one more time and it went back to the game screen but it was fronzen and without any alert.
- 
- 6.The game does not have restart option. If the game is over you need to upload the page.
- 
- 7. The game does not have a start and pause button. You can only control the game with the keyboard.
+ 6. Accordian with the intruction of the game works. Result:confirmed!
 
- 8. If the ball touch half way on the paddle and half way on the bottom it will be game over.
+ 7. HTML inputs all works correctly. Result:confirmed!
  
- 9. When shows the game over screen, you still can "pause" the game, and it will change from game over screen to pause screen. If you keep to pressing the space bar for pause, it will make the alert "pause" go away and back.
+ 8. When the player breaks all the blocks show an alert "YOU WON" and the option to reset the game. Result:confirmed!
  
-      
+  Test made on : Keyboard, mouse click, JQuery events, HTML, Game states and change of state respond to the correct keys/clicks. I have tested this game throughly and can say it's all working as expected.   
+  
 */
